@@ -23,16 +23,29 @@ class ImageSerializer(serializers.ModelSerializer):
         image = Image.objects.create(metadata=metadata, **validated_data)
         return image
 
-    def update(self, instance, validated_data):
-        place_data = validated_data.pop('place')
-        place = instance.place
+    def update(self, image_instance, validated_data):
+         # Update fields of the Image model
+        image_instance.title = validated_data.get('title', image_instance.title)
+        image_instance.path = validated_data.get('path', image_instance.path)
+        image_instance.thumbnail_path = validated_data.get('thumbnail_path', image_instance.thumbnail_path)
+        image_instance.tags = validated_data.get('tags', image_instance.tags)
 
-        instance.serves_hot_dogs = validated_data.get('serves_hot_dogs', instance.serves_hot_dogs)
-        instance.serves_pizza = validated_data.get('serves_pizza', instance.serves_pizza)
-        instance.save()
+        # Assuming validated_data contains a 'metadata' key with a dict of the metadata updates
+        metadata_data = validated_data.get('metadata', {})
 
-        place.name = place_data.get('name', place.name)
-        place.address = place_data.get('address', place.address)
-        place.save()
+        # Update fields of the related ImageMetadata model
+        # Note: image_instance.metadata directly accesses the related ImageMetadata instance
+        if metadata_data:
+            metadata_instance = image_instance.metadata
+            metadata_instance.size = metadata_data.get('size', metadata_instance.size)
+            metadata_instance.resolution = metadata_data.get('resolution', metadata_instance.resolution)
+            metadata_instance.timestamp = metadata_data.get('timestamp', metadata_instance.timestamp)
+            metadata_instance.file_type = metadata_data.get('file_type', metadata_instance.file_type)
+            metadata_instance.file_name = metadata_data.get('file_name', metadata_instance.file_name)
+            metadata_instance.save()
 
-        return instance
+        # Save the updated Image instance
+        image_instance.save()
+
+        # Return the updated Image instance
+        return image_instance

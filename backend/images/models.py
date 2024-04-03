@@ -13,4 +13,4 @@ class Image(models.Model):
     path = models.URLField(max_length=500)
     thumbnail_path = models.URLField(max_length=500)
     tags = ArrayField(models.CharField(max_length=50), blank=True, default=list)
-    metadata = models.OneToOneField(ImageMetadata, on_delete=models.CASCADE, primary_key=True)
+    metadata = models.OneToOneField(ImageMetadata, on_delete=models.CASCADE)

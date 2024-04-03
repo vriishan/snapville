@@ -16,3 +16,4 @@ class ImageViewSet(viewsets.GenericViewSet,
     def get_queryset(self):
         return Image.objects.all()
     
+    
