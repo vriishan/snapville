@@ -20,6 +20,7 @@ class ImageSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         metadata_data = validated_data.pop('metadata')
         metadata = ImageMetadata.objects.create(**metadata_data)
+        validated_data['id'] = metadata.id
         image = Image.objects.create(metadata=metadata, **validated_data)
         return image
 
