@@ -19,16 +19,17 @@ from django.urls import include, path
 from rest_framework import routers
 
 from images.views import *
+from uploads.views import *
 
 
 router = routers.DefaultRouter()
 
 router.register(r'image', ImageViewSet, r"image")
-
+router.register(r'upload', UploadViewSet, basename="upload")
 
 urlpatterns = [
     # path(r'^users/', include(users.urls)),
     # path(r'^$/', index_view, {}, name='index'),
 
-    path('api/', include(router.urls), name='api')
-]
+    path('api/', include(router.urls), name='api'),
+] 

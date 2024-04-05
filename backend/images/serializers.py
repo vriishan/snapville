@@ -15,7 +15,7 @@ class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Image
-        fields = ['title', 'path', 'thumbnail_path', 'tags', 'metadata']
+        fields = ['id', 'title', 'path', 'thumbnail_path', 'tags', 'metadata']
     
     def create(self, validated_data):
         metadata_data = validated_data.pop('metadata')
