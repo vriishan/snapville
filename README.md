@@ -2,17 +2,15 @@
 
 A distributed image server as part of a course project in the DSCI 551 - Foundations of Data Management course.
 
-## Stack
+## Stack requirements
 
 - Django
 - React
 - PostgreSQL
+- Conda
 
 ## How to run
 
-Please run `pip install requirements.txt` or `conda env create -f env.txt` to install required dependencies.
+Run `conda env create -f environment.yml` to install required dependencies.
 
-- for the backend, to run the server please run `python manage.py runserver`
-
-
-
+- for the backend, start the django server with `python manage.py runserver`. `manage.py` is present in the root of the backend folder.
