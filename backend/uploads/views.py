@@ -13,7 +13,7 @@ class UploadViewSet(ViewSet):
     def create(self, request):
         imageFile = request.FILES.get('image')
         imageData = request.data.get('data', None)
-        
+
         if imageFile:
             file_path = os.path.join(settings.IMAGE_DIR, imageFile.name)
             thumbnail_path = os.path.join(settings.THUMBNAIL_DIR, imageFile.name)
@@ -22,7 +22,7 @@ class UploadViewSet(ViewSet):
                 for chunk in imageFile.chunks():
                     destination.write(chunk)
 
-            process_image(file_path=file_path)
+            metadata = process_image(file_path=file_path)
             create_thumbnail(file_path, thumbnail_path)
 
         if imageData:
@@ -31,6 +31,9 @@ class UploadViewSet(ViewSet):
             # Here, you would update the existing image record with any new details provided
             # This could involve updating fields in a database record, for example
             # Assuming `ImageSerializer` handles validation and saving of data
+            data['metadata'] = metadata
+            data['thumbnail_path'] = thumbnail_path
+            data['path'] = file_path
             imageSerializer = ImageSerializer(data=data)
             if imageSerializer.is_valid():
                 imageSerializer.save()
