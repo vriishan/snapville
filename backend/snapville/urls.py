@@ -20,12 +20,14 @@ from rest_framework import routers
 
 from images.views import *
 from uploads.views import *
+from tags.views import *
 
 
 router = routers.DefaultRouter()
 
 router.register(r'image', ImageViewSet, r"image")
 router.register(r'upload', UploadViewSet, basename="upload")
+router.register(r'tag', TagViewSet, basename="tag")
 
 urlpatterns = [
     # path(r'^users/', include(users.urls)),
