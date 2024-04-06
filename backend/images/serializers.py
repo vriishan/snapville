@@ -13,7 +13,7 @@ class ImageMetadataSerializer(serializers.ModelSerializer):
 
 
 class ImageSerializer(serializers.ModelSerializer):
-    metadata = ImageMetadataSerializer()
+    metadata = ImageMetadataSerializer(read_only=True)
     tags = serializers.ListField(
         child=serializers.CharField(), 
         required=True, 
@@ -23,6 +23,13 @@ class ImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Image
         fields = ['id', 'title', 'path', 'thumbnail_path', 'tags', 'metadata']
+
+        extra_kwargs = {
+            'title': {'required': True},
+            'tags': {'required': True},
+            'path': {'required': False},
+            'thumbnail_path': {'required': False}
+        }
 
     def get_tags(self, instance):
         # Custom logic to retrieve tags for the image
