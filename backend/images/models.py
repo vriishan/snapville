@@ -1,6 +1,5 @@
 import uuid
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 
 class ImageMetadata(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -15,5 +14,4 @@ class Image(models.Model):
     title = models.CharField(max_length=255)
     path = models.URLField(max_length=500)
     thumbnail_path = models.URLField(max_length=500)
-    tags = ArrayField(models.CharField(max_length=50), blank=True, default=list)
     metadata = models.OneToOneField(ImageMetadata, on_delete=models.CASCADE)

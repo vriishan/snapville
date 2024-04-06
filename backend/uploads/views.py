@@ -70,7 +70,9 @@ class UploadViewSet(ViewSet):
             imageSerializer = ImageSerializer(data=data)
             if imageSerializer.is_valid():
                 imageSerializer.update(image, data)
-                return Response(imageSerializer.data, status=status.HTTP_200_OK)
+                # ImageSerializer.data does not have the ids, the data is updated into the actual 'image' field
+                # Hence using the ImageSerializer(image).data
+                return Response(ImageSerializer(image).data, status=status.HTTP_200_OK)
             else:
                 return Response(imageSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
