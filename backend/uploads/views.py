@@ -3,12 +3,12 @@ import json, os
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from snapville import settings
-from utils import process_image, create_thumbnail
+from utils.image_utils import process_image, create_thumbnail
 from images.serializers import ImageSerializer
 from images.models import Image
+from utils.hash_utils import hash_to_partition
 
 class UploadViewSet(ViewSet):
-    # Assuming serializer_class and other parts of the class remain the same
 
     def create(self, request):
         imageFile = request.FILES.get('image')
@@ -47,7 +47,7 @@ class UploadViewSet(ViewSet):
 
     def update(self, request, pk=None):
         try:
-            image = Image.objects.get(pk=pk)
+            image = Image.objects.using(hash_to_partition(pk)).get(pk=pk)
         except:
             return Response({"error": "Image record not found"}, status=status.HTTP_404_NOT_FOUND)
         
