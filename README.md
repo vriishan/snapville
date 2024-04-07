@@ -18,7 +18,7 @@ A distributed image server as part of a course project in the DSCI 551 - Foundat
 - Run `setup.sh` to setup the databases
 - Run `migrate.bat`, which runs django migrations and sets up the tables in each database
 - Start the django server with `python backend/manage.py runserver`
-- Access the api on `http://127.0.0.1:8000/api/
+- Access the api on `http://127.0.0.1:8000/api/`
 
 ### Frontend
 
