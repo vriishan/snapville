@@ -76,6 +76,27 @@ WSGI_APPLICATION = 'snapville.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+NUM_OF_PARTITIONS = 5
+
+SHARDS_LIST = [{
+    f'partition{i}': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': f'partition{i}',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'localhost',
+        'PORT': '5432'
+    } 
+} for i in range(NUM_OF_PARTITIONS)]
+
+DB_LOOKUP = {
+    'primary': 'default',
+}
+
+DB_LOOKUP.update({i: f'partition{i}' for i in range(NUM_OF_PARTITIONS)})
+
+SHARDS = {key: val for dict in SHARDS_LIST for key, val in dict.items()}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -84,8 +105,12 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '5432'
-    }
+    },
 }
+
+DATABASES.update(SHARDS)
+
+DATABASE_ROUTERS = ['snapville.routers.SnapvilleDatabaseRouter']
 
 CORS_ALLOW_METHODS = [
     'DELETE',

@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.response import Response
 import os
 from image_tags.models import ImageTag
+from images.models import ImageMetadata
 
 class ImageViewSet(viewsets.GenericViewSet,
                        ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView):
@@ -21,7 +22,13 @@ class ImageViewSet(viewsets.GenericViewSet,
         return Image.objects.all()
     
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
+        
+        id = self.kwargs.get('pk')
+
+        db = hash_to_partition(id)
+
+        # Fetch the object from the specific database
+        instance = Image.objects.using(db).get(pk=id)
         
         # Custom pre-delete logic here
         # For example, logging deletion or checking some conditions
@@ -35,10 +42,13 @@ class ImageViewSet(viewsets.GenericViewSet,
             os.remove(instance.path)
 
         # remove ImageTag entry
-        ImageTag.objects.filter(image_id=instance.id).delete()
+        ImageTag.objects.using('default').filter(image_id=instance.id).delete()
 
-        # Perform the deletion of the image
-        instance.delete()
+        # figure out a better way to handle this delete
+        ImageMetadata.objects.using(db).filter(id=instance.id).delete()
+
+        # Perform the deletion of the image (this should delete the metadata instance, but that is not happening)
+        instance.delete(using=db)
 
         # Return a custom response or the standard response
         return Response({'message': 'Image deleted successfully'}, status=status.HTTP_204_NO_CONTENT)
