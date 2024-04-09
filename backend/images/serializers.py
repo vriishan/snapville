@@ -38,13 +38,16 @@ class ImageSerializer(serializers.ModelSerializer):
         # This could involve querying the separate database for tags associated with this image
         tags_for_image = Tag.objects.using('default').filter(image_tags__image_id=instance.id)
         return [tag.name for tag in tags_for_image]
-
+    
+    def save(self, **kwargs):
+        # Pass all kwargs to the super().save() method
+        return super().save(**kwargs)
     
     def create(self, validated_data):
         metadata_data = validated_data.pop('metadata')
         tags_data = validated_data.pop('tags', [])
 
-        id = uuid.uuid4()
+        id = validated_data.pop('custom_id')
         db = hash_to_partition(id)
 
         metadata_data['id'] = id

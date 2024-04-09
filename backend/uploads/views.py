@@ -7,6 +7,7 @@ from utils.image_utils import process_image, create_thumbnail
 from images.serializers import ImageSerializer
 from images.models import Image
 from utils.hash_utils import hash_to_partition
+import uuid
 
 class UploadViewSet(ViewSet):
 
@@ -14,36 +15,43 @@ class UploadViewSet(ViewSet):
         imageFile = request.FILES.get('image')
         imageData = request.data.get('data', None)
 
-        if imageFile:
-            file_path = os.path.join(settings.IMAGE_DIR, imageFile.name)
-            thumbnail_path = os.path.join(settings.THUMBNAIL_DIR, imageFile.name)
-
-            with open(file_path, 'wb+') as destination:
-                for chunk in imageFile.chunks():
-                    destination.write(chunk)
-
-            metadata = process_image(file_path=file_path)
-
-            create_thumbnail(file_path, thumbnail_path)
-
-        if imageData:
+        if imageData and imageFile:
             # Process the JSON data for additional image details and update the record
             data = json.loads(imageData)
             # Here, you would update the existing image record with any new details provided
             # This could involve updating fields in a database record, for example
             # Assuming `ImageSerializer` handles validation and saving of data
-            data['metadata'] = metadata
-            data['thumbnail_path'] = thumbnail_path
-            data['path'] = file_path
             imageSerializer = ImageSerializer(data=data)
             if imageSerializer.is_valid():
-                imageSerializer.save()
+                
+                # this id can be generated a different way
+                id = uuid.uuid4()
+                _, extension = os.path.splitext(imageFile.name)
+
+                file_path = os.path.join(settings.IMAGE_DIR, f'{id}{extension}')
+                thumbnail_path = os.path.join(settings.THUMBNAIL_DIR, f'{id}{extension}')
+
+                with open(file_path, 'wb+') as destination:
+                    for chunk in imageFile.chunks():
+                        destination.write(chunk)
+
+                metadata = process_image(file_path=file_path)
+                create_thumbnail(file_path, thumbnail_path)
+                
+                data['metadata'] = metadata
+                data['thumbnail_path'] = thumbnail_path
+                data['path'] = file_path
+                # reserialize data
+                imageSerializer = ImageSerializer(data=data)
+                if imageSerializer.is_valid():
+                    imageSerializer.save(custom_id=id)
+
                 return Response(imageSerializer.data, status=status.HTTP_201_CREATED)
             else:
                 return Response(imageSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # handle errors
-        return Response({})
+        # return error
+        return Response({"error": "image or data not present"}, status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, pk=None):
         try:
@@ -71,8 +79,10 @@ class UploadViewSet(ViewSet):
                     os.remove(image.thumbnail_path)
                     os.remove(image.path)
 
-                    file_path = os.path.join(settings.IMAGE_DIR, imageFile.name)
-                    thumbnail_path = os.path.join(settings.THUMBNAIL_DIR, imageFile.name)
+                    _, extension = os.path.splitext(imageFile.name)
+
+                    file_path = os.path.join(settings.IMAGE_DIR, f'{pk}{extension}')
+                    thumbnail_path = os.path.join(settings.THUMBNAIL_DIR, f'{pk}{extension}')
 
                     with open(file_path, 'wb+') as destination:
                         for chunk in imageFile.chunks():
