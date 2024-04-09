@@ -26,12 +26,16 @@ from tags.views import *
 router = routers.DefaultRouter()
 
 router.register(r'image', ImageViewSet, r"image")
-router.register(r'upload', UploadViewSet, basename="upload")
 router.register(r'tag', TagViewSet, basename="tag")
 
 urlpatterns = [
     # path(r'^users/', include(users.urls)),
     # path(r'^$/', index_view, {}, name='index'),
 
+    # custom API routes
+    path('api/$upload-image/', UploadViewSet.as_view({'post': 'create'}), name='upload-create'),
+    path('api/$update-image/<uuid:pk>/', UploadViewSet.as_view({'put': 'update'}), name='upload-update'),
+
     path('api/', include(router.urls), name='api'),
+
 ] 
