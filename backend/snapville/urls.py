@@ -35,6 +35,7 @@ urlpatterns = [
     # custom API routes
     path('api/$upload-image/', UploadViewSet.as_view({'post': 'create'}), name='upload-create'),
     path('api/$update-image/<uuid:pk>/', UploadViewSet.as_view({'put': 'update'}), name='upload-update'),
+    path('api/image/<uuid:id>/', ImageViewSet.as_view({'get': 'retrieve'})),
 
     path('api/', include(router.urls), name='api'),
 
