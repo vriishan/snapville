@@ -2,7 +2,7 @@ from collections import defaultdict
 from .models import *
 from .serializers import *
 from rest_framework.permissions import AllowAny
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from images.models import Image
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from rest_framework import status
@@ -24,8 +24,22 @@ class ImageViewSet(viewsets.GenericViewSet,
     serializer_class = ImageSerializer
     permission_classes = [AllowAny]
 
-    def get_queryset(self):
+    def retrieve(self, request, *args, **kwargs):
+        image_id = kwargs.get('id', None)
+        if image_id is None:
+            return Response({'error': 'Image ID not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Fetch the Image instance by UUID
+            db = hash_to_partition(image_id)
+            instance = Image.objects.using(db).get(id=image_id)
+        except Image.DoesNotExist:
+            return Response({'error': 'Image not found'}, status=status.HTTP_404_NOT_FOUND)
 
+        # Serialize the Image instance, including related metadata
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def get_queryset(self):
         # Get query params
         tag = self.request.query_params.get('tag', None)
 
