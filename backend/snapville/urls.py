@@ -15,18 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-
 from rest_framework import routers
 
 from images.views import *
 from uploads.views import *
 from tags.views import *
+from users.views import *
 
 
 router = routers.DefaultRouter()
 
 router.register(r'image', ImageViewSet, r"image")
 router.register(r'tag', TagViewSet, basename="tag")
+router.register(r'user', UserViewSet, basename='user')
 
 urlpatterns = [
     # path(r'^users/', include(users.urls)),
@@ -36,7 +37,7 @@ urlpatterns = [
     path('api/$upload-image/', UploadViewSet.as_view({'post': 'create'}), name='upload-create'),
     path('api/$update-image/<uuid:pk>/', UploadViewSet.as_view({'put': 'update'}), name='upload-update'),
     path('api/image/<uuid:id>/', ImageViewSet.as_view({'get': 'retrieve'})),
+    path('api/user/<str:email_id>/', UserViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'}), name='user-detail'),
 
     path('api/', include(router.urls), name='api'),
-
 ] 
