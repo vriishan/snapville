@@ -1,0 +1,60 @@
+.registerPage {
+  display: flex;
+  justify-content: center;
+  height: 90vh;
+  align-items: center;
+  background-color: yellow;
+}
+
+.registerPage__container {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  align-items: center;
+  padding: 50px;
+  border-radius: 5px;
+  color: yellow;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: black;
+}
+
+.container__header {
+  font-size: xx-large;
+  font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.container__form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.container__form > * {
+  margin: 10px 0;
+}
+
+.container__form > input {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.container__form > button {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: yellow;
+  color: black;
+  font-weight: bold;
+  transition: 0.5s;
+  margin-top: 20px;
+  border: 1px solid black;
+}
+
+.container__form > button:hover {
+  background-color: black;
+  color: white;
+  cursor: pointer;
+  border: 1px solid yellow;
+}
