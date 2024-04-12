@@ -39,7 +39,7 @@ class ImageViewSet(viewsets.GenericViewSet,
         instance.increment_viewcount()
 
         # Serialize the Image instance, including related metadata
-        serializer = self.get_serializer(instance)
+        serializer = self.get_serializer(instance, context = {'output': True})
 
         return Response(serializer.data)
 
@@ -60,16 +60,14 @@ class ImageViewSet(viewsets.GenericViewSet,
                 imageList = ImageTag.objects.using('default').filter(tag=tag.id).values_list('image_id', flat=True) 
                 res = self.getImagesFromIdList(imageList)
                 # this should ideally be done on the frontend
-                res.sort(key=lambda x: x.viewcount, reverse=True)
+                res.sort(key=lambda x: x['viewcount'], reverse=True)
 
             elif email_id is not None:
                 imageList = UserImage.objects.using('default').filter(user_id=email_id).values_list('image_id', flat=True)
                 res = self.getImagesFromIdList(imageList)
                 # this should ideally be done on the frontend
-                print(res)
-                res.sort(key=lambda x: x.viewcount, reverse=True)
+                res.sort(key=lambda x: x['viewcount'], reverse=True)
             
-            print(res)
             return res
 
         allImages = []
@@ -78,8 +76,10 @@ class ImageViewSet(viewsets.GenericViewSet,
                 continue
             allImages.extend(Image.objects.using(part).all())
         
+
         allImages.sort(key=lambda x: x.viewcount, reverse=True)
-        return allImages
+        serializer = ImageSerializer(allImages, many=True, context = {'output': True})
+        return serializer.data
 
 
     def destroy(self, request, *args, **kwargs):
@@ -126,5 +126,5 @@ class ImageViewSet(viewsets.GenericViewSet,
         for part, imageIds in partitionImages.items():
             res.extend(Image.objects.using(part).filter(id__in=imageIds))
 
-        return res
+        return ImageSerializer(res, many=True, context = {'output': True }).data
     
