@@ -4,6 +4,9 @@ from images.models import ImageMetadata, Image
 from tags.models import Tag
 from image_tags.models import ImageTag
 from utils.hash_utils import hash_to_partition
+from users.models import User
+from users.serializers import UserSerializer
+from user_images.models import UserImage
 import uuid
 
 
@@ -11,7 +14,7 @@ class ImageMetadataSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.ImageMetadata
-        fields = ['size', 'resolution', 'timestamp', 'file_type', 'file_name']
+        fields = ['size', 'resolution', 'uploaded_on', 'file_type', 'file_name']
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -24,13 +27,16 @@ class ImageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Image
-        fields = ['id', 'title', 'path', 'thumbnail_path', 'tags', 'metadata']
+        fields = ['id', 'title', 'path', 'thumbnail_path', 'tags', 'metadata', 'owner', 'viewcount']
+        read_only_fields = ('viewcount',)
 
         extra_kwargs = {
             'title': {'required': True},
             'tags': {'required': True},
+            'owner': {'required': True},
             'path': {'required': False},
-            'thumbnail_path': {'required': False}
+            'thumbnail_path': {'required': False},
+            'viewcount': {'required': False}
         }
 
     def get_tags(self, instance):
@@ -53,12 +59,18 @@ class ImageSerializer(serializers.ModelSerializer):
         metadata_data['id'] = id
         validated_data['id'] = id
 
+        user = User.objects.using('default').get(email_id=validated_data['owner'])
+
         metadata = ImageMetadata.objects.using(db).create(**metadata_data)
 
         for tag in tags_data:
             tag, created = Tag.objects.using('default').get_or_create(name=tag)
             ImageTag.objects.using('default').get_or_create(image_id=metadata.id, tag=tag)
+        
+        UserImage.objects.using('default').create(image_id=id, user_id=user)
+
         image = Image.objects.using(db).create(metadata=metadata, **validated_data)
+        image.id = id
         return image
 
     def update(self, image_instance, validated_data):
@@ -98,6 +110,9 @@ class ImageSerializer(serializers.ModelSerializer):
         """
         Add tags to the serialized output.
         """
+
         ret = super().to_representation(instance)
-        ret['tags'] = self.get_tags(instance)  # Populate tags for read operations
+        if self.context.get('output', False):
+            ret['tags'] = self.get_tags(instance)  # Populate tags for read operations
+            ret['user'] = UserSerializer(User.objects.using('default').get(email_id=instance.owner)).data
         return ret

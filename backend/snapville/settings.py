@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'images',
     'tags',
     'image_tags',
-    'users'
+    'users',
+    'user_images'
 ]
 
 MIDDLEWARE = [
