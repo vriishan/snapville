@@ -96,7 +96,7 @@ class ImageSerializer(serializers.ModelSerializer):
         # Update fields of the related ImageMetadata model
         # Note: image_instance.metadata directly accesses the related ImageMetadata instance
         if metadata_data:
-            for field in ['size', 'resolution', 'timestamp', 'file_type', 'file_name']:
+            for field in ['size', 'resolution', 'uploaded_on', 'file_type', 'file_name']:
                 setattr(image_instance.metadata, field, metadata_data.get(field, getattr(image_instance.metadata, field)))
             image_instance.metadata.save(using=db)
 
