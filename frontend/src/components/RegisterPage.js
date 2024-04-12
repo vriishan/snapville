@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import './registerpage.css';
+import React, { useState, useEffect } from 'react';
+import './RegisterPage.css';
 
-const RegisterPage = () => {
+const RegisterPage = ({ setShowRegisterModal }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -12,6 +12,20 @@ const RegisterPage = () => {
     username: ''
   });
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (e.target.classList.contains('registerModal')) {
+        setShowRegisterModal(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [setShowRegisterModal]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -19,20 +33,17 @@ const RegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Check if all fields are filled
     const { firstName, lastName, email, password, confirmPassword, dateOfBirth, username } = formData;
     if (!firstName || !lastName || !email || !password || !confirmPassword || !dateOfBirth || !username) {
       alert('Please fill in all fields');
       return;
     }
-    // Date of Birth validation
     const currentDate = new Date();
     const selectedDate = new Date(dateOfBirth);
     if (selectedDate > currentDate) {
       alert('Date of Birth cannot be in the future');
       return;
     }
-    // Prepare the data for POST request
     const postData = {
       email_id: email,
       username: username,
@@ -42,7 +53,6 @@ const RegisterPage = () => {
       dob: dateOfBirth
     };
     try {
-      // Send POST request
       const response = await fetch('http://127.0.0.1:8000/api/user/', {
         method: 'POST',
         headers: {
@@ -53,19 +63,17 @@ const RegisterPage = () => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      // Registration successful
       alert('Registration successful');
-      // Optionally, you can redirect the user to a different page after successful registration
+      setShowRegisterModal(false);
     } catch (error) {
       console.error('Error:', error.message);
-      // Handle error appropriately (e.g., show error message to the user)
       alert('Registration failed. Please try again later.');
     }
   };
 
   return (
-    <div className='registerPage'>
-      <div className='registerPage__container'>
+    <div className='registerModal'>
+      <div className='registerModal__container'>
         <h1 className='container__header'>snapville</h1>
         <form className='container__form' onSubmit={handleSubmit}>
           <input type='text' name='firstName' value={formData.firstName} onChange={handleChange} placeholder='First Name' />

@@ -1,24 +1,39 @@
 import React from "react";
 import "./header.css";
-import { Link } from "react-router-dom";
+import { FaSearch } from "react-icons/fa"; 
 
-const Header = ({ handleUploadPopupOpen }) => {
+const Header = ({ handleUploadPopupOpen, isLoggedIn, handleLogout, setShowRegisterModal, setShowLoginModal }) => {
   return (
     <div className="header">
-      <div className="header__logo"><Link to={'/'} style={{ textDecoration: 'none'}}>snapville</Link></div>
+      <div className="header__logo">
+        <span style={{ textDecoration: 'none', cursor: 'pointer' }}>snapville</span>
+      </div>
 
-      <input className="header__search" type="text"></input>
+      <div className="header__searchContainer">
+        <input className="header__search" type="text" placeholder="Search"></input>
+        <FaSearch className="header__searchIcon" />
+      </div>
 
       <div className="header__buttonContainer">
-        <div
-          className="buttonContainer__button"
-          onClick={handleUploadPopupOpen}
-        >
-          Create a New Post
-        </div>
-        <div className="buttonContainer__button"><Link to={'/signin'}>Sign In</Link></div>
-        <div className="buttonContainer__button"><Link to={'/register'}>Register</Link></div>
-        {/* TODO: more buttons go here */}
+        {isLoggedIn && (
+          <div className="buttonContainer__button" onClick={handleUploadPopupOpen}>
+            Create a New Post
+          </div>
+        )}
+        {isLoggedIn ? (
+          <div className="buttonContainer__button" onClick={handleLogout}>
+            Logout
+          </div>
+        ) : (
+          <>
+            <div className="buttonContainer__button" onClick={() => setShowLoginModal(true)}>
+              Login
+            </div>
+            <div className="buttonContainer__button" onClick={() => setShowRegisterModal(true)}>
+              Register
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

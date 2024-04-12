@@ -1,38 +1,83 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
-// import "./styles.css";
 import Header from "./components/Header";
+import RegisterPage from "./components/RegisterPage";
+import LoginPage from "./components/LoginPage";
 import UploadPopup from "./components/UploadPopup";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import SignInPage from "./Pages/SignInPage/SignInPage";
-import RegisterPage from "./Pages/RegisterPage/RegisterPage";
+import ImageGrid from "./components/ImageGrid";
+import Background from "./Background";
+import ImageModal from "./components/ImageModal";
 
 function App() {
-  // Using BEM naming convention
-  const [openUploadPopup, setopenUploadPopup] = useState(false);
+  const [openUploadPopup, setOpenUploadPopup] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [images, setImages] = useState([]);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/image/");
+        if (response.ok) {
+          const data = await response.json();
+          setImages(data);
+        } else {
+          throw new Error("Failed to fetch images");
+        }
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   const handleUploadPopupClose = () => {
-    setopenUploadPopup(false);
+    setOpenUploadPopup(false);
   };
 
   const handleUploadPopupOpen = () => {
-    setopenUploadPopup(true);
+    setOpenUploadPopup(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
+
+  const handleImageClick = (image) => {
+    setSelectedImage(image);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedImage(null);
   };
 
   return (
     <div className="App">
-      <Router>
-        <Header handleUploadPopupOpen={handleUploadPopupOpen} />
-        {openUploadPopup && (
-          <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />
-        )}
-        
-          <Routes>s
-            <Route path="/" element={<h1>Home</h1>} />
-            <Route path="/signin" element={<SignInPage/>} />
-            <Route path="/register" element={<RegisterPage/>} />
-          </Routes>
-      </Router>
+      <Background />
+      <Header
+        handleUploadPopupOpen={handleUploadPopupOpen}
+        isLoggedIn={isLoggedIn}
+        handleLogout={handleLogout}
+        setShowRegisterModal={setShowRegisterModal}
+        setShowLoginModal={setShowLoginModal}
+      />
+      {showRegisterModal && <RegisterPage setShowRegisterModal={setShowRegisterModal} />}
+      {showLoginModal && (
+        <LoginPage setIsLoggedIn={setIsLoggedIn} setShowLoginModal={setShowLoginModal} />
+      )}
+      {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />}
+      <ImageGrid images={images} onImageClick={handleImageClick} />
+      {selectedImage && (
+        <ImageModal
+          imagePath={selectedImage.path}
+          username={selectedImage.owner}
+          title={selectedImage.title}
+          closeModal={handleCloseModal}
+        />
+      )}
     </div>
   );
 }
