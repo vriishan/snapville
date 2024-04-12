@@ -47,8 +47,8 @@ class UploadViewSet(ViewSet):
                 create_thumbnail(file_path, thumbnail_path)
                 
                 data['metadata'] = metadata
-                data['thumbnail_path'] = thumbnail_path
-                data['path'] = file_path
+                data['thumbnail_path'] = f'/thumbnails/{id}{extension}'
+                data['path'] = f'/images/{id}{extension}'
                 # reserialize data
                 imageSerializer = ImageSerializer(data=data, context = {'output': True})
                 if imageSerializer.is_valid():
@@ -84,8 +84,14 @@ class UploadViewSet(ViewSet):
                 if imageFile:
 
                     # remove old file (image + thumbnail)
-                    os.remove(image.thumbnail_path)
-                    os.remove(image.path)
+                    thumbnail_path = f'{settings.MEDIA_ROOT}{image.thumbnail_path}'.replace('\\', '/')
+                    image_path = f'{settings.MEDIA_ROOT}{image.path}'.replace('\\', '/')
+
+                    if os.path.exists(thumbnail_path):
+                        os.remove(thumbnail_path)
+
+                    if os.path.exists(image_path):
+                        os.remove(image_path)
 
                     _, extension = os.path.splitext(imageFile.name)
 
@@ -99,8 +105,8 @@ class UploadViewSet(ViewSet):
                     metadata = process_image(file_path=file_path)
                     create_thumbnail(file_path, thumbnail_path)
 
-                    data['thumbnail_path'] = thumbnail_path
-                    data['path'] = file_path
+                    data['thumbnail_path'] = f'/thumbnails/{pk}{extension}'
+                    data['path'] = f'/images/{pk}{extension}'
                 
                 data['metadata'] = metadata
                 imageSerializer.update(image, data)

@@ -21,6 +21,7 @@ from images.views import *
 from uploads.views import *
 from tags.views import *
 from users.views import *
+from django.conf.urls.static import static
 
 
 router = routers.DefaultRouter()
@@ -40,4 +41,4 @@ urlpatterns = [
     path('api/user/<str:email_id>/', UserViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'}), name='user-detail'),
 
     path('api/', include(router.urls), name='api'),
-] 
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

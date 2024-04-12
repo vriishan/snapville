@@ -15,6 +15,7 @@ from image_tags.models import ImageTag
 from user_images.models import UserImage
 from django.shortcuts import get_object_or_404
 from utils.hash_utils import *
+from snapville.settings import MEDIA_ROOT
 
 
 class ImageViewSet(viewsets.GenericViewSet,
@@ -39,7 +40,7 @@ class ImageViewSet(viewsets.GenericViewSet,
         instance.increment_viewcount()
 
         # Serialize the Image instance, including related metadata
-        serializer = self.get_serializer(instance)
+        serializer = self.get_serializer(instance, context = {'output': True})
 
         return Response(serializer.data)
 
@@ -60,16 +61,14 @@ class ImageViewSet(viewsets.GenericViewSet,
                 imageList = ImageTag.objects.using('default').filter(tag=tag.id).values_list('image_id', flat=True) 
                 res = self.getImagesFromIdList(imageList)
                 # this should ideally be done on the frontend
-                res.sort(key=lambda x: x.viewcount, reverse=True)
+                res.sort(key=lambda x: x['viewcount'], reverse=True)
 
             elif email_id is not None:
                 imageList = UserImage.objects.using('default').filter(user_id=email_id).values_list('image_id', flat=True)
                 res = self.getImagesFromIdList(imageList)
                 # this should ideally be done on the frontend
-                print(res)
-                res.sort(key=lambda x: x.viewcount, reverse=True)
+                res.sort(key=lambda x: x['viewcount'], reverse=True)
             
-            print(res)
             return res
 
         allImages = []
@@ -78,8 +77,10 @@ class ImageViewSet(viewsets.GenericViewSet,
                 continue
             allImages.extend(Image.objects.using(part).all())
         
+
         allImages.sort(key=lambda x: x.viewcount, reverse=True)
-        return allImages
+        serializer = ImageSerializer(allImages, many=True, context = {'output': True})
+        return serializer.data
 
 
     def destroy(self, request, *args, **kwargs):
@@ -89,18 +90,25 @@ class ImageViewSet(viewsets.GenericViewSet,
         db = hash_to_partition(id)
 
         # Fetch the object from the specific database
-        instance = Image.objects.using(db).get(pk=id)
+        try:
+            instance = Image.objects.using(db).get(pk=id)
+        except:
+            return Response({"error": "Image record not found"}, status=status.HTTP_404_NOT_FOUND)
         
         # Custom pre-delete logic here
         # For example, logging deletion or checking some conditions
         print(f"Deleting image: {instance.id}")
 
         # remove image from uploads and thumbnails
-        if os.path.exists(instance.thumbnail_path):
-            os.remove(instance.thumbnail_path)
 
-        if os.path.exists(instance.path):
-            os.remove(instance.path)
+        thumbnail_path = f'{MEDIA_ROOT}{instance.thumbnail_path}'.replace('\\', '/')
+        image_path = f'{MEDIA_ROOT}{instance.path}'.replace('\\', '/')
+
+        if os.path.exists(thumbnail_path):
+            os.remove(thumbnail_path)
+
+        if os.path.exists(image_path):
+            os.remove(image_path)
 
         # remove ImageTag entry
         ImageTag.objects.using('default').filter(image_id=instance.id).delete()
@@ -126,5 +134,5 @@ class ImageViewSet(viewsets.GenericViewSet,
         for part, imageIds in partitionImages.items():
             res.extend(Image.objects.using(part).filter(id__in=imageIds))
 
-        return res
+        return ImageSerializer(res, many=True, context = {'output': True }).data
     
