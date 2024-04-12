@@ -6,6 +6,7 @@ from snapville import settings
 from utils.image_utils import process_image, create_thumbnail
 from images.serializers import ImageSerializer
 from images.models import Image
+from users.models import User
 from utils.hash_utils import hash_to_partition
 import uuid
 
@@ -21,9 +22,16 @@ class UploadViewSet(ViewSet):
             # Here, you would update the existing image record with any new details provided
             # This could involve updating fields in a database record, for example
             # Assuming `ImageSerializer` handles validation and saving of data
-            imageSerializer = ImageSerializer(data=data)
+            imageSerializer = ImageSerializer(data=data, context = {'output': False})
             if imageSerializer.is_valid():
                 
+                email_id = imageSerializer.data['owner']
+
+                try:
+                    User.objects.using('default').get(email_id = email_id)
+                except:
+                    return Response({"error": "Owner with email id not found"}, status=status.HTTP_400_BAD_REQUEST)
+
                 # this id can be generated a different way
                 id = uuid.uuid4()
                 _, extension = os.path.splitext(imageFile.name)
@@ -42,7 +50,7 @@ class UploadViewSet(ViewSet):
                 data['thumbnail_path'] = thumbnail_path
                 data['path'] = file_path
                 # reserialize data
-                imageSerializer = ImageSerializer(data=data)
+                imageSerializer = ImageSerializer(data=data, context = {'output': True})
                 if imageSerializer.is_valid():
                     imageSerializer.save(custom_id=id)
 
@@ -68,7 +76,7 @@ class UploadViewSet(ViewSet):
             # Here, you would update the existing image record with any new details provided
             # This could involve updating fields in a database record, for example
             # Assuming `ImageSerializer` handles validation and saving of data
-            imageSerializer = ImageSerializer(data=data)
+            imageSerializer = ImageSerializer(data=data, context = {'output': False})
             
             if imageSerializer.is_valid():
                 metadata = image.metadata
@@ -99,7 +107,7 @@ class UploadViewSet(ViewSet):
 
                 # ImageSerializer.data does not have the ids, the data is updated into the actual 'image' field
                 # Hence using the ImageSerializer(image).data
-                return Response(ImageSerializer(image).data, status=status.HTTP_200_OK)
+                return Response(ImageSerializer(image, context = {'output': True}).data, status=status.HTTP_200_OK)
             else:
                 return Response(imageSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
         

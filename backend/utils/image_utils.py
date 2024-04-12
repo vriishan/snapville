@@ -14,7 +14,7 @@ def process_image(file_path):
         # Get image resolution
         resolution = f"{img.width}x{img.height}"
         # Get file modification time
-        timestamp = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
+        uploaded_on = datetime.datetime.now()
         # Get file type (MIME type)
         file_type = img.format  # This gets the image format (JPEG, PNG, etc.). Use MIME types if necessary.
         # Get file name
@@ -26,7 +26,7 @@ def process_image(file_path):
     return {
         "size": size_hr,
         "resolution": resolution,
-        "timestamp": timestamp,
+        "uploaded_on": uploaded_on,
         "file_type": file_type,
         "file_name": file_name
     }

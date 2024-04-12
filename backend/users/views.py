@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
 from .models import User
 from .serializers import UserSerializer
+from user_images.models import UserImage
 
 class UserViewSet(viewsets.GenericViewSet, ListAPIView, CreateAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView):
     serializer_class=UserSerializer
@@ -40,6 +41,7 @@ class UserViewSet(viewsets.GenericViewSet, ListAPIView, CreateAPIView, UpdateAPI
             try:
                 user = User.objects.get(email_id=email)
                 user.delete()
+                UserImage.objects.using('default').filter(user_id=email).delete()
                 return Response({'message': 'User deleted successfully'})
             except User.DoesNotExist:
                 return Response({'error': 'User not found'}, status=404)
