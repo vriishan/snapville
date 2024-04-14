@@ -11,3 +11,5 @@ python backend/manage.py migrate --database partition1
 python backend/manage.py migrate --database partition2
 python backend/manage.py migrate --database partition3
 python backend/manage.py migrate --database partition4
+
+python backend/manage.py create_superuser --email_id superuser@mail.com --username superuser --dob 1997-01-01 --password Pass@123
