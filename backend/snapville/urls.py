@@ -23,6 +23,8 @@ from tags.views import *
 from users.views import *
 from django.conf.urls.static import static
 
+from rest_framework.authtoken.views import obtain_auth_token
+
 
 router = routers.DefaultRouter()
 
@@ -34,11 +36,19 @@ urlpatterns = [
     # path(r'^users/', include(users.urls)),
     # path(r'^$/', index_view, {}, name='index'),
 
+    # admin url
+    path('admin/', admin.site.urls),
+
     # custom API routes
     path('api/$upload-image/', UploadViewSet.as_view({'post': 'create'}), name='upload-create'),
     path('api/$update-image/<uuid:pk>/', UploadViewSet.as_view({'put': 'update'}), name='upload-update'),
     path('api/image/<uuid:id>/', ImageViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'})),
     path('api/user/<str:email_id>/', UserViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'}), name='user-detail'),
 
+    # login route
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+
+    # main API/DRF routes
     path('api/', include(router.urls), name='api'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

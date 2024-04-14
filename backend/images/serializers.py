@@ -7,7 +7,6 @@ from utils.hash_utils import hash_to_partition
 from users.models import User
 from users.serializers import UserSerializer
 from user_images.models import UserImage
-import uuid
 
 
 class ImageMetadataSerializer(serializers.ModelSerializer):
@@ -80,6 +79,7 @@ class ImageSerializer(serializers.ModelSerializer):
          # Update fields of the Image model
         image_instance.title = validated_data.get('title', image_instance.title)
         image_instance.path = validated_data.get('path', image_instance.path)
+        image_instance.viewcount = validated_data.get('viewcount', image_instance.viewcount)
         image_instance.thumbnail_path = validated_data.get('thumbnail_path', image_instance.thumbnail_path)
 
         # Assuming validated_data contains a 'metadata' key with a dict of the metadata updates
@@ -110,9 +110,9 @@ class ImageSerializer(serializers.ModelSerializer):
         """
         Add tags to the serialized output.
         """
-
         ret = super().to_representation(instance)
-        if self.context.get('output', False):
+        if self.context.get('output', False) or 'request' in self.context:
             ret['tags'] = self.get_tags(instance)  # Populate tags for read operations
-            ret['user'] = UserSerializer(User.objects.using('default').get(email_id=instance.owner)).data
+            user = User.objects.using('default').get(email_id=instance.owner)
+            ret['user'] = UserSerializer(user).data
         return ret
