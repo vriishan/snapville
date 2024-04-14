@@ -9,8 +9,23 @@ from images.models import Image
 from users.models import User
 from utils.hash_utils import hash_to_partition
 import uuid
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from snapville.permissions import IsOwnerOrSuperuser
 
 class UploadViewSet(ViewSet):
+
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.request.method in ["POST", "PUT"]:
+            return [IsOwnerOrSuperuser()]
+
+        return [IsAuthenticated()] 
 
     def create(self, request):
         imageFile = request.FILES.get('image')
@@ -28,9 +43,11 @@ class UploadViewSet(ViewSet):
                 email_id = imageSerializer.data['owner']
 
                 try:
-                    User.objects.using('default').get(email_id = email_id)
+                    user = User.objects.using('default').get(email_id = email_id)
                 except:
                     return Response({"error": "Owner with email id not found"}, status=status.HTTP_400_BAD_REQUEST)
+                
+                self.check_object_permissions(request, user)
 
                 # this id can be generated a different way
                 id = uuid.uuid4()
@@ -79,6 +96,14 @@ class UploadViewSet(ViewSet):
             imageSerializer = ImageSerializer(data=data, context = {'output': False})
             
             if imageSerializer.is_valid():
+    
+                email_id = imageSerializer.data['owner']
+                try:
+                    user = User.objects.using('default').get(email_id = email_id)
+                except:
+                    return Response({"error": "Owner with email id not found"}, status=status.HTTP_400_BAD_REQUEST)
+                self.check_object_permissions(request, user)
+                
                 metadata = image.metadata
                 # update image file
                 if imageFile:
@@ -107,6 +132,7 @@ class UploadViewSet(ViewSet):
 
                     data['thumbnail_path'] = f'/thumbnails/{pk}{extension}'
                     data['path'] = f'/images/{pk}{extension}'
+                    data['viewcount'] = 0
                 
                 data['metadata'] = metadata
                 imageSerializer.update(image, data)

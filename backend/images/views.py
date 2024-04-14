@@ -16,7 +16,7 @@ from user_images.models import UserImage
 from django.shortcuts import get_object_or_404
 from utils.hash_utils import *
 from snapville.settings import MEDIA_ROOT
-
+from snapville.permissions import IsOwnerOrSuperuser
 
 class ImageViewSet(viewsets.GenericViewSet,
                        ListAPIView, RetrieveAPIView, DestroyAPIView):
@@ -24,7 +24,16 @@ class ImageViewSet(viewsets.GenericViewSet,
     Contains information about a command-line Unix program.
     '''
     serializer_class = ImageSerializer
-    permission_classes = [AllowAny]
+
+    
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.request.method in ["POST", "UPDATE", "DELETE"]:
+            return [IsOwnerOrSuperuser()]
+
+        return [AllowAny()]  # All other methods (GET) is public access
 
     def retrieve(self, request, *args, **kwargs):
         image_id = kwargs.get('id', None)
@@ -61,13 +70,13 @@ class ImageViewSet(viewsets.GenericViewSet,
                 imageList = ImageTag.objects.using('default').filter(tag=tag.id).values_list('image_id', flat=True) 
                 res = self.getImagesFromIdList(imageList)
                 # this should ideally be done on the frontend
-                res.sort(key=lambda x: x['viewcount'], reverse=True)
+                res.sort(key=lambda x: x.viewcount, reverse=True)
 
             elif email_id is not None:
                 imageList = UserImage.objects.using('default').filter(user_id=email_id).values_list('image_id', flat=True)
                 res = self.getImagesFromIdList(imageList)
                 # this should ideally be done on the frontend
-                res.sort(key=lambda x: x['viewcount'], reverse=True)
+                res.sort(key=lambda x: x.viewcount, reverse=True)
             
             return res
 
@@ -79,8 +88,7 @@ class ImageViewSet(viewsets.GenericViewSet,
         
 
         allImages.sort(key=lambda x: x.viewcount, reverse=True)
-        serializer = ImageSerializer(allImages, many=True, context = {'output': True})
-        return serializer.data
+        return allImages
 
 
     def destroy(self, request, *args, **kwargs):
@@ -95,6 +103,8 @@ class ImageViewSet(viewsets.GenericViewSet,
         except:
             return Response({"error": "Image record not found"}, status=status.HTTP_404_NOT_FOUND)
         
+        self.check_object_permissions(request, instance)
+
         # Custom pre-delete logic here
         # For example, logging deletion or checking some conditions
         print(f"Deleting image: {instance.id}")
@@ -134,5 +144,5 @@ class ImageViewSet(viewsets.GenericViewSet,
         for part, imageIds in partitionImages.items():
             res.extend(Image.objects.using(part).filter(id__in=imageIds))
 
-        return ImageSerializer(res, many=True, context = {'output': True }).data
+        return res
     
