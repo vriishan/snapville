@@ -17,7 +17,7 @@
 
 .header__searchContainer {
   position: relative;
-  width: 30%;
+  width: 150%;
 }
 
 .header__search {
@@ -37,10 +37,11 @@
 .header__searchIcon {
   position: absolute;
   left: 10px;
-  top: 50%;
-  color: #2980b9;
+  top: 30%;
   transform: translateY(-50%);
+  color: #2980b9;
 }
+
 
 .header__buttonContainer {
   display: flex;

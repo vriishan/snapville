@@ -17,12 +17,14 @@ const ImageItem = ({ image, openModal }) => {
   );
 };
 
-const ImageGrid = ({ images }) => {
+const ImageGrid = ({ images, isLoggedIn }) => {
   const [modalImage, setModalImage] = useState(null);
   const [fullImage, setFullImage] = useState(null);
   const [modalImageTitle, setModalImageTitle] = useState("");
   const [username, setUsername] = useState("");
   const [tags,setTags]=useState([]);
+  const [isTagSearch, setIsTagSearch] = useState(false);
+
   useEffect(() => {
     const fetchFullImage = async () => {
       if (modalImage) {
@@ -56,20 +58,26 @@ const ImageGrid = ({ images }) => {
     setModalImageTitle("");
   };
 
+  useEffect(() => {
+    setIsTagSearch(tags.length > 0);
+  }, [tags]);
+
   return (
     <div className="image-grid">
       {images.map((image) => (
         <ImageItem key={image.id} image={image} openModal={openModal} />
       ))}
       {modalImage && (
-  <ImageModal
-    imagePath={fullImage}
-    imageTitle={modalImageTitle}
-    uname={username}
-    tags={tags}
-    closeModal={closeModal}
-  />
-)}
+        <ImageModal
+          imagePath={fullImage}
+          imageTitle={modalImageTitle}
+          uname={username}
+          tags={tags}
+          closeModal={closeModal}
+          isTagSearch={isTagSearch}
+          isLoggedIn={isLoggedIn} // Pass isLoggedIn to ImageModal
+        />
+      )}
     </div>
   );
 };

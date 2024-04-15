@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './LoginPage.css';
 
 const LoginPage = ({ setIsLoggedIn, setShowLoginModal }) => {
@@ -7,9 +7,12 @@ const LoginPage = ({ setIsLoggedIn, setShowLoginModal }) => {
     password: ''
   });
 
+  const [error, setError] = useState(null);
+  const modalRef = useRef(null);
+
   useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (e.target.classList.contains('loginModal')) {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
         setShowLoginModal(false);
       }
     };
@@ -30,23 +33,46 @@ const LoginPage = ({ setIsLoggedIn, setShowLoginModal }) => {
     e.preventDefault();
     const { username, password } = formData;
     if (!username || !password) {
-      alert('Please fill in all fields');
+      setError('Please fill in all fields');
       return;
     }
-    // You can add your login logic here
-    setIsLoggedIn(true);
-    setShowLoginModal(false);
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api-token-auth/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail);
+      }
+
+      const data = await response.json();
+      localStorage.setItem('token', data.token); // Save token to local storage
+      setIsLoggedIn(true);
+      setShowLoginModal(false);
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
     <div className='loginModal'>
-      <div className='loginModal__container'>
+      <div className='loginModal__container' ref={modalRef}>
         <h1 className='container__header'>snapville</h1>
         <form className='container__form' onSubmit={handleSubmit}>
           <input type='text' name='username' value={formData.username} onChange={handleChange} placeholder='Username' />
           <input type='password' name='password' value={formData.password} onChange={handleChange} placeholder='Password' />
           <button type='submit'>Login</button>
         </form>
+        {error && <p className="error-message">{error}</p>}
       </div>
     </div>
   );

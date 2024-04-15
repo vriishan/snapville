@@ -3,7 +3,7 @@ import "./App.css";
 import Header from "./components/Header";
 import RegisterPage from "./components/RegisterPage";
 import LoginPage from "./components/LoginPage";
-import UploadPopup from "./components/UploadPopup";
+import UploadPopup from "./components/UploadPopup"; // Import UploadPopup component
 import ImageGrid from "./components/ImageGrid";
 import Background from "./Background";
 import ImageModal from "./components/ImageModal";
@@ -17,6 +17,12 @@ function App() {
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
+    // Check if a token exists in local storage
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+
     const fetchImages = async () => {
       try {
         const response = await fetch("http://127.0.0.1:8000/api/image/");
@@ -44,6 +50,22 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
+    // Remove the token from local storage on logout
+    localStorage.removeItem("token");
+  };
+
+  const handleSearch = async (tag) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/api/image/?tag=${tag}`);
+      if (response.ok) {
+        const data = await response.json();
+        setImages(data);
+      } else {
+        throw new Error("Failed to fetch images with tag:", tag);
+      }
+    } catch (error) {
+      console.error("Error fetching images with tag:", tag, error);
+    }
   };
 
   const handleImageClick = (image) => {
@@ -63,12 +85,13 @@ function App() {
         handleLogout={handleLogout}
         setShowRegisterModal={setShowRegisterModal}
         setShowLoginModal={setShowLoginModal}
+        handleSearch={handleSearch}
       />
       {showRegisterModal && <RegisterPage setShowRegisterModal={setShowRegisterModal} />}
       {showLoginModal && (
         <LoginPage setIsLoggedIn={setIsLoggedIn} setShowLoginModal={setShowLoginModal} />
       )}
-      {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />}
+      {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />} {/* Include UploadPopup */}
       <ImageGrid images={images} onImageClick={handleImageClick} />
       {selectedImage && (
         <ImageModal
