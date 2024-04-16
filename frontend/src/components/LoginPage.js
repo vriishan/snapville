@@ -55,7 +55,8 @@ const LoginPage = ({ setIsLoggedIn, setShowLoginModal }) => {
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token); // Save token to local storage
+      sessionStorage.setItem('token', data.token); // Save token to local storage
+      sessionStorage.setItem('username', username);
       setIsLoggedIn(true);
       setShowLoginModal(false);
     } catch (error) {

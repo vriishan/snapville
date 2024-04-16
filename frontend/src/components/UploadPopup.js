@@ -5,6 +5,7 @@ import "./popup.css";
 
 const UploadPopup = ({ handleUploadPopupClose }) => {
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedImagePath, setSelectedImagePath] = useState(null);
   const [imageName, setImageName] = useState("");
   const [imageTags, setImageTags] = useState([]);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
@@ -15,7 +16,8 @@ const UploadPopup = ({ handleUploadPopupClose }) => {
     const reader = new FileReader();
 
     reader.onload = (e) => {
-      setSelectedImage(e.target.result);
+      setSelectedImage(imageFile);
+      setSelectedImagePath(e.target.result);
       setPreviewModalOpen(true);
     };
 
@@ -46,17 +48,24 @@ const UploadPopup = ({ handleUploadPopupClose }) => {
       return;
     }
 
+    // get owner details for the form
+    const owner = sessionStorage.getItem('username');
+    if (!owner) {
+      console.error("current user's username not found in storage");
+      return;
+    }
+
     // Prepare the form data
     const formData = new FormData();
     formData.append("image", selectedImage);
-    formData.append("data", JSON.stringify({ title: imageName, tags: imageTags, owner: "johndo@mail.com" }));
+    formData.append("data", JSON.stringify({ title: imageName, tags: imageTags, owner: owner}));
 
     console.log("Form Data:", formData);
 
     // Send POST request to upload image
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (!token) {
-      console.error("Token not found in local storage");
+      console.error("token not found in storage");
       return;
     }
 
@@ -104,7 +113,7 @@ const UploadPopup = ({ handleUploadPopupClose }) => {
       </div>
       {previewModalOpen && (
         <PreviewModal
-          image={selectedImage}
+          image={selectedImagePath}
           imageName={imageName}
           imageTags={imageTags}
           handleClose={handlePreviewModalClose}

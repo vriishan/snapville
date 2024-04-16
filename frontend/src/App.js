@@ -18,7 +18,7 @@ function App() {
 
   useEffect(() => {
     // Check if a token exists in local storage
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
     }
@@ -50,8 +50,8 @@ function App() {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    // Remove the token from local storage on logout
-    localStorage.removeItem("token");
+    // clear session storage
+    sessionStorage.clear();
   };
 
   const handleSearch = async (tag) => {
