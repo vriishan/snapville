@@ -87,6 +87,7 @@ const UploadPopup = ({ handleUploadPopupClose }) => {
         // You can add any further actions here after successful upload
       })
       .catch((error) => console.error(error));
+      window.location.reload();
   };
 
   return (
