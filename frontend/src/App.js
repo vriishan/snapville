@@ -15,6 +15,7 @@ function App() {
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [tag,setTag]=useState("");
 
   useEffect(() => {
     // Check if a token exists in local storage
@@ -59,6 +60,7 @@ function App() {
       const response = await fetch(`http://127.0.0.1:8000/api/image/?tag=${tag}`);
       if (response.ok) {
         const data = await response.json();
+        setTag(tag);
         setImages(data);
       } else {
         throw new Error("Failed to fetch images with tag:", tag);
@@ -92,7 +94,7 @@ function App() {
         <LoginPage setIsLoggedIn={setIsLoggedIn} setShowLoginModal={setShowLoginModal} />
       )}
       {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />} {/* Include UploadPopup */}
-      <ImageGrid images={images} onImageClick={handleImageClick} />
+      <ImageGrid images={images} tag={tag} onImageClick={handleImageClick} />
       {selectedImage && (
         <ImageModal
           imagePath={selectedImage.path}

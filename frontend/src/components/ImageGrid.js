@@ -17,13 +17,14 @@ const ImageItem = ({ image, openModal }) => {
   );
 };
 
-const ImageGrid = ({ images, isLoggedIn }) => {
+const ImageGrid = ({ images, tag, isLoggedIn }) => {
   const [modalImage, setModalImage] = useState(null);
   const [fullImage, setFullImage] = useState(null);
   const [modalImageTitle, setModalImageTitle] = useState("");
   const [username, setUsername] = useState("");
   const [tags,setTags]=useState([]);
   const [isTagSearch, setIsTagSearch] = useState(false);
+  const [owner, setOwner] = useState("");
 
   useEffect(() => {
     const fetchFullImage = async () => {
@@ -36,6 +37,7 @@ const ImageGrid = ({ images, isLoggedIn }) => {
             setModalImageTitle(modalImage.title);
             setUsername(data.user.username);
             setTags(data.tags);
+            setOwner(data.owner);
           } else {
             throw new Error("Failed to fetch full-size image");
           }
@@ -72,7 +74,9 @@ const ImageGrid = ({ images, isLoggedIn }) => {
           imagePath={fullImage}
           imageTitle={modalImageTitle}
           uname={username}
+          owner={owner}
           tags={tags}
+          tag={tag}
           closeModal={closeModal}
           isTagSearch={isTagSearch}
           isLoggedIn={isLoggedIn} // Pass isLoggedIn to ImageModal
