@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'images',
     'tags',
     'image_tags',
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -123,6 +125,9 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+CORS_ALLOW_ALL_ORIGINS=True
+CORS_ALLOW_ALL_CREDENTIALS=True
 
 
 # Password validation

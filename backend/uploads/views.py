@@ -76,7 +76,7 @@ class UploadViewSet(ViewSet):
                 return Response(imageSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # return error
-        return Response({"error": "image or data not present"}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "image or data not present"}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, pk=None):
         try:
@@ -142,5 +142,6 @@ class UploadViewSet(ViewSet):
                 return Response(ImageSerializer(image, context = {'output': True}).data, status=status.HTTP_200_OK)
             else:
                 return Response(imageSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        return Response({})
+            
+        # imageData not set
+        return Response({"error": "data not present"}, status=status.HTTP_400_BAD_REQUEST)

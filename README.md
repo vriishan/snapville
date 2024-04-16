@@ -21,5 +21,6 @@ A distributed image server as part of a course project in the DSCI 551 - Foundat
 - Access the api on `http://127.0.0.1:8000/api/`
 
 ### Frontend
-
-- TODO
+In the `frontend` folder, 
+- Run `npm install`
+- Run `npm start`
