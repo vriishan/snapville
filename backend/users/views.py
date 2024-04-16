@@ -26,6 +26,9 @@ class UserViewSet(viewsets.GenericViewSet, ListAPIView, CreateAPIView, UpdateAPI
         if self.request.method in ["DELETE"]:
             return [IsSuperuser()]  # Only allow admin users to POST or DELETE
         
+        if self.action == 'introspect':
+            return [IsAuthenticated()]
+
         if self.request.method in ["GET"] and 'email_id' not in self.kwargs:
             return [IsSuperuser()]
         elif self.request.method in ["GET"] and 'email_id' in self.kwargs:
@@ -77,3 +80,9 @@ class UserViewSet(viewsets.GenericViewSet, ListAPIView, CreateAPIView, UpdateAPI
             return Response(serializer.data)
         else:
             return Response({"error": "not found"}, status=404)
+    
+    def introspect(self, request, *args, **kwargs):
+        user = request.user
+        user_data = UserSerializer(user).data
+        user_data['is_admin'] = user.is_superuser
+        return Response(user_data)

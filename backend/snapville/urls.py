@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/$update-image/<uuid:pk>/', UploadViewSet.as_view({'put': 'update'}), name='upload-update'),
     path('api/image/<uuid:id>/', ImageViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'})),
     path('api/user/<str:email_id>/', UserViewSet.as_view({'get': 'retrieve', 'delete': 'destroy'}), name='user-detail'),
+    path('api/introspect/', UserViewSet.as_view({'get': 'introspect'}), name="introspect"),
 
     # login route
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
