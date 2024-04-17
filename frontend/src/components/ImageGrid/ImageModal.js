@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import * as Constants from '../../utils/constants'
 import "./ImageModal.css";
 
 const ImageModal = ({ imagePath, imageTitle, uname, tags, closeModal, isTagSearch, tag }) => {
@@ -7,7 +8,7 @@ const ImageModal = ({ imagePath, imageTitle, uname, tags, closeModal, isTagSearc
     const handleOverlayClick = async () => {
       if (isTagSearch && tag) {
         try {
-          const response = await fetch(`http://127.0.0.1:8000/api/image/?tag=${encodeURIComponent(tag)}`);
+          const response = await fetch(`${Constants.IMAGE_ENDPOINT}?tag=${encodeURIComponent(tag)}`);
           if (response.ok) {
             const data = await response.json();
             // Reload the page with the tag parameter
@@ -20,7 +21,8 @@ const ImageModal = ({ imagePath, imageTitle, uname, tags, closeModal, isTagSearc
         }
       } else {
         // If images are not loaded based on a tag search or the tag does not exist, simply reload the page
-        window.location.reload();
+        // window.location.reload();
+        closeModal();
       }
     };
 
@@ -45,7 +47,7 @@ const ImageModal = ({ imagePath, imageTitle, uname, tags, closeModal, isTagSearc
             ))}
           </div>
         </div>
-        <img src={"http://localhost:8000/media" + imagePath} alt="Full Size" />
+        <img src={`${Constants.MEDIA_ENDPONT}${imagePath}`} alt="Full Size" />
       </div>
     </div>
   );

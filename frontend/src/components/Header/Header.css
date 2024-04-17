@@ -67,3 +67,7 @@
   cursor: pointer;
   border: 1px solid #fff;
 }
+
+.header__searchButton {
+  display: none;
+}

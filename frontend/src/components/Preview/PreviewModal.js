@@ -1,5 +1,5 @@
 import React from "react";
-import "./previewModal.css";
+import "./PreviewModal.css";
 
 const PreviewModal = ({
   image,

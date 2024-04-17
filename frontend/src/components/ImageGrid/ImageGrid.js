@@ -3,14 +3,22 @@ import "./ImageGrid.css";
 import ImageModal from "./ImageModal";
 
 const ImageItem = ({ image, openModal }) => {
+  
+  const [viewCount, setViewCount] = useState(image.viewcount);
+
+  const handleImageClick = () => {
+    setViewCount(prevCount => prevCount + 1);
+    openModal(image);
+  };
+
   return (
-    <div className="image-item-container" onClick={() => openModal(image)}>
+    <div className="image-item-container" onClick={handleImageClick}>
       <img src={"http://localhost:8000/media" + image.thumbnail_path} alt={image.title} />
       <div className="image-details">
         <span className="image-title">{image.title}</span>
         <div className="view-count">
           <i className="fas fa-eye view-icon"></i>
-          <span>{image.viewcount}</span>
+          <span>{viewCount}</span>
         </div>
       </div>
     </div>

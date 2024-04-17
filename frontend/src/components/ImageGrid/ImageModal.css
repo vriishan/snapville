@@ -12,8 +12,11 @@
   
   .image-modal-content {
     position: relative;
-    max-width: 80%;
-    max-height: 80%;
+    width: intrinsic; /* Use the intrinsic keyword or leave it unset so it depends on content size */
+    height: intrinsic; /* Use the intrinsic keyword or leave it unset so it depends on content size */
+    max-width: 80vw; /* Use viewport width to set the maximum width */
+    max-height: 80vh; /* Use viewport height to set the maximum height */
+    margin: auto; /* Center align the div if it's smaller than the max dimensions */
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -25,9 +28,9 @@
   }
   
   .image-modal-content img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    max-width: 100%; /* Max width is 100% of the .image-modal-content */
+    max-height: 100%; /* Max height is 100% of the .image-modal-content */
+    object-fit: contain; /* The image will scale down to fit within the container */
   }
   
   .image-title {

@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './LoginPage.css';
+import './LoginModal.css';
+import { INTROSPECT_ENDPOINT } from '../../utils/constants';
+import { useAuth } from '../../context/AuthContext';
 
-const LoginPage = ({ setIsLoggedIn, setShowLoginModal }) => {
+const LoginModal = ({ setShowLoginModal }) => {
+  const { currentUser, setCurrentUser, logout } = useAuth();
   const [formData, setFormData] = useState({
     username: '',
     password: ''
@@ -55,10 +58,29 @@ const LoginPage = ({ setIsLoggedIn, setShowLoginModal }) => {
       }
 
       const data = await response.json();
-      sessionStorage.setItem('token', data.token); // Save token to local storage
+      sessionStorage.setItem('token', data.token);
       sessionStorage.setItem('username', username);
-      setIsLoggedIn(true);
+
+      // Now, make the second API call to get user data
+      const userDataResponse = await fetch(`${INTROSPECT_ENDPOINT}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Token ${data.token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!userDataResponse.ok) {
+        const errorData = await userDataResponse.json();
+        throw new Error(errorData.detail || 'Failed to get user data');
+      }
+
+      const userData = await userDataResponse.json();
+      sessionStorage.setItem('userdata', JSON.stringify(userData));
+
+      setCurrentUser(userData);
       setShowLoginModal(false);
+
     } catch (error) {
       setError(error.message);
     }
@@ -79,4 +101,4 @@ const LoginPage = ({ setIsLoggedIn, setShowLoginModal }) => {
   );
 };
 
-export default LoginPage;
+export default LoginModal;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import './RegisterPage.css';
+import './RegisterModal.css';
 
-const RegisterPage = ({ setShowRegisterModal }) => {
+const RegisterModal = ({ setShowRegisterModal }) => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -90,4 +90,4 @@ const RegisterPage = ({ setShowRegisterModal }) => {
   );
 };
 
-export default RegisterPage;
+export default RegisterModal;

@@ -1,7 +1,7 @@
 // UploadPopup.js
 import React, { useState } from "react";
-import PreviewModal from "./PreviewModal";
-import "./popup.css";
+import PreviewModal from './../Preview/PreviewModal'
+import "./UploadPopup.css";
 
 const UploadPopup = ({ handleUploadPopupClose }) => {
   const [selectedImage, setSelectedImage] = useState(null);

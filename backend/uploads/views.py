@@ -133,8 +133,8 @@ class UploadViewSet(ViewSet):
                     data['thumbnail_path'] = f'/thumbnails/{pk}{extension}'
                     data['path'] = f'/images/{pk}{extension}'
                     data['viewcount'] = 0
-                
-                data['metadata'] = metadata
+                    data['metadata'] = metadata
+                    
                 imageSerializer.update(image, data)
 
                 # ImageSerializer.data does not have the ids, the data is updated into the actual 'image' field
