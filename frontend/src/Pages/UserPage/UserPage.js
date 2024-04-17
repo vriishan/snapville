@@ -12,7 +12,7 @@ const UserPage = () => {
 
     useEffect(() => {
 
-        if (!currentUser || currentUser.is_admin !== 'true') {
+        if (!currentUser || currentUser.is_admin !== true) {
             // Redirect to home or login page if not admin
             navigate('/');
             return;
