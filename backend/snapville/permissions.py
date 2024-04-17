@@ -20,7 +20,7 @@ class IsOwnerOrSuperuser(BasePermission):
         # Check if the current user is the owner of the object or a superuser
         obj_check = False
         if isinstance(obj, Image):
-            obj_check = obj.owner == request.user
+            obj_check = obj.owner == request.user.email_id
         elif isinstance(obj, User):
             obj_check = obj == request.user
         return obj_check or request.user.is_superuser

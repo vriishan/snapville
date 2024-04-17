@@ -150,7 +150,7 @@ const ImagePage = () => {
                     {currentUser && currentUser.email_id == image.owner && <FontAwesomeIcon icon={faEdit} onClick={handleEdit} className="icon-button" title="Edit" />}
                     <FontAwesomeIcon icon={faShareAlt} onClick={handleShare} className="icon-button" title="Share" />
                     <FontAwesomeIcon icon={faDownload} onClick={handleDownload} className="icon-button" title="Download" />
-                    {currentUser && currentUser.is_admin && <FontAwesomeIcon icon={faTrash} onClick={handleDelete} className="icon-button" title="Delete" />}
+                    {currentUser && (currentUser.is_admin || currentUser.email_id == image.owner) && <FontAwesomeIcon icon={faTrash} onClick={handleDelete} className="icon-button" title="Delete" />}
                 </div>
             </div>
             <div className="image-tags">

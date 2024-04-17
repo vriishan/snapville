@@ -62,8 +62,6 @@ class ImageViewSet(viewsets.GenericViewSet,
             if tag is not None:
                 tag_obj = Tag.objects.filter(name=tag).first()
                 if tag_obj:
-                    query = ImageTag.objects.filter(tag=tag_obj).values_list('image_id', flat=True).query
-                    print(str(query))
                     tag_image_ids = ImageTag.objects.filter(tag=tag_obj).values_list('image_id', flat=True)
                     image_ids_set.update(tag_image_ids)
 

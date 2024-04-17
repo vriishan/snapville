@@ -47,6 +47,7 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
+    navigate('/images');
   };
 
   return (
