@@ -1,0 +1,15 @@
+/* This custom class will ensure the table is centered and takes up 75% of the container's width */
+.w-75 {
+    width: 75%;
+  }
+  
+  /* Darken the header with a custom background color */
+  .thead-dark th {
+    background-color: #343a40; /* Bootstrap's dark theme color */
+    color: #fff;
+  }
+  
+  /* This will make the table content take up the full width of its container */
+  .table {
+    width: 100%;
+  }
