@@ -17,11 +17,12 @@ function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchImages = async () => {
       try {
         let imageUrl = `${Constants.IMAGE_ENDPOINT}`
         if (searchTerm) {
-          imageUrl = `${imageUrl}?tag=${searchTerm}`
+          imageUrl = `${imageUrl}?tag=${searchTerm}&title=${searchTerm}&username=${searchTerm}`
         }
         const response = await fetch(`${imageUrl}`);
         if (response.ok) {
@@ -67,7 +68,7 @@ function HomePage() {
       {/* <Background /> */}
       {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />} {/* Include UploadPopup */}
       {images.length > 0 && <ImageGrid images={images} onImageClick={handleImageClick} />}
-      {images.length == 0 && !isLoading && <div className="noImagesText">{noImagesTextValue}</div>}
+      {images.length === 0 && !isLoading && <div className="noImagesText">{noImagesTextValue}</div>}
       {selectedImage && (
         <ImageModal
           imagePath={selectedImage.path}

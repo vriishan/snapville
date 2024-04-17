@@ -1,0 +1,26 @@
+
+.modal-title {
+    font-size: 24px; /* Bigger font size for the title */
+    font-weight: bold; /* Make it bold */
+  }
+  
+  .modal-label {
+    display: block; /* Makes the label display as block, showing it on a new line */
+    margin-top: 8px; /* Adds some space above the label */
+    font-size: 20px; /* Larger font size for the label */
+    font-weight: bold; /* Bold font for the label */
+  }
+  
+  .modal-input {
+    width: 100%; /* Makes the input take the full width of the modal */
+    padding: 8px; /* Adds some padding inside the input */
+    margin-top: 4px; /* Adds some space above the input */
+    margin-bottom: 16px; /* Adds some space below the input */
+    border-radius: 4px; /* Slightly rounds the corners of the input field */
+    border: 1px solid #ccc; /* A subtle border for the input */
+  }
+  
+  /* You might already have styles for Modal.Footer buttons, but just in case */
+  .modal-footer-button {
+    margin-left: 8px; /* Adds space between buttons if needed */
+  }

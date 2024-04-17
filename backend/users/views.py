@@ -1,7 +1,10 @@
+from collections import defaultdict
+from images.models import Image
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, DestroyAPIView, UpdateAPIView
+from utils.hash_utils import hash_to_partition
 from .models import User
 from .serializers import UserSerializer
 from user_images.models import UserImage
@@ -61,9 +64,14 @@ class UserViewSet(viewsets.GenericViewSet, ListAPIView, CreateAPIView, UpdateAPI
         self.check_object_permissions(request, email)
         if email:
             try:
+                # delete all associated objects
                 user = User.objects.get(email_id=email)
-                user.delete()
+                image_ids = UserImage.objects.using('default').filter(user_id=email).values_list('image_id', flat=True)
+                print(image_ids)
+                self.deleteImagesFromIdList(image_ids)
                 UserImage.objects.using('default').filter(user_id=email).delete()
+                user.delete()
+
                 return Response({'message': 'User deleted successfully'})
             except User.DoesNotExist:
                 return Response({'error': 'User not found'}, status=404)
@@ -86,3 +94,16 @@ class UserViewSet(viewsets.GenericViewSet, ListAPIView, CreateAPIView, UpdateAPI
         user_data = UserSerializer(user).data
         user_data['is_admin'] = user.is_superuser
         return Response(user_data)
+
+    def deleteImagesFromIdList(self, imageList):
+        print(imageList)
+        partitionImages = defaultdict(list)
+
+        for imageId in imageList:
+            partitionImages[hash_to_partition(imageId)].append(imageId)
+        print(partitionImages)
+        for part, imageIds in partitionImages.items():
+            Image.objects.using(part).filter(id__in=imageIds).delete()
+
+        return
+    

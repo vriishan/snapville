@@ -30,8 +30,6 @@ const ImagePage = () => {
     };
 
     const handleShare = () => {
-        // Logic to share the image URL
-        // This could involve copying the URL to the clipboard or using Web Share API
         navigator.share({ url: image.path })
       };
     
@@ -149,10 +147,10 @@ const ImagePage = () => {
                     <p>Uploaded by: {image.user.username}</p>
                 </div>
                 <div className="image-header-icons">
-                    <FontAwesomeIcon icon={faEdit} onClick={handleEdit} className="icon-button" title="Edit" />
+                    {currentUser && currentUser.email_id == image.owner && <FontAwesomeIcon icon={faEdit} onClick={handleEdit} className="icon-button" title="Edit" />}
                     <FontAwesomeIcon icon={faShareAlt} onClick={handleShare} className="icon-button" title="Share" />
                     <FontAwesomeIcon icon={faDownload} onClick={handleDownload} className="icon-button" title="Download" />
-                    <FontAwesomeIcon icon={faTrash} onClick={handleDelete} className="icon-button" title="Delete" />
+                    {currentUser && currentUser.is_admin && <FontAwesomeIcon icon={faTrash} onClick={handleDelete} className="icon-button" title="Delete" />}
                 </div>
             </div>
             <div className="image-tags">
@@ -169,11 +167,11 @@ const ImagePage = () => {
                 </div>
                 <div className="image-sidebar">
                     <div className="image-metadata">
-                        <div>Uploaded on: {getFormattedDate(image.metadata.uploaded_on)}</div>
-                        <div>Size: {image.metadata.size}</div>
-                        <div>Resolution: {image.metadata.resolution}</div>
-                        <div>Views: {image.viewcount}</div>
-                        <div>Image Extension: {image.metadata.file_type}</div>
+                        <div><b>Uploaded on:</b> {getFormattedDate(image.metadata.uploaded_on)}</div>
+                        <div><b>File Size:</b> {image.metadata.size}</div>
+                        <div><b>Resolution:</b> {image.metadata.resolution}</div>
+                        <div><b>Views:</b> {image.viewcount}</div>
+                        <div><b>Image Extension:</b> {image.metadata.file_type}</div>
                     </div>
                 </div>
             </div>

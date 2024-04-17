@@ -24,7 +24,7 @@
     max-height: 90vh;
     max-width: 60%;
     display: flex;
-    justify-content: flex-start; /* Center the image horizontally */
+    justify-content: center; /* Center the image horizontally */
     align-items: center; /* Center the image vertically */
   }
   
@@ -36,7 +36,7 @@
   
   .image-sidebar {
     /* Assuming the sidebar should be on the right-hand side and scroll independently */
-    background-color: #8a8a8a;
+    background-color: #436ea2;
     width: 22%; /* Adjust width as needed */
     overflow-y: auto; /* Allow scrolling on the y-axis */
     /* border-left: 2px solid #676767; Replace with the actual color code for the darker gray you want */
@@ -61,7 +61,7 @@
   }
   
   .image-tags li {
-    background-color: #9f9f9f; /* Optional: use an even lighter gray for tag items */
+    background-color: #c1ddff; /* Optional: use an even lighter gray for tag items */
     display: inline-block; /* Displays tags in a line */
     padding: 5px 10px;
     margin-right: 5px; /* Spacing between tags */
@@ -104,7 +104,7 @@
   .image-header-icons {
     display: flex;
     align-items: flex-start;
-    padding: 1rem 2rem 0;
+    padding: 0.6rem 2rem 0;
     gap: 0 0.50rem;
   }
 
