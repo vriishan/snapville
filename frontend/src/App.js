@@ -15,9 +15,8 @@ function App() {
           <Header />
           <Routes>
             <Route path="/" element={<HomePage/>} />
-            <Route path="/user" element={<UserPage/>} />
-            {/* <Route path="/login" component={LoginPage} /> */}
-            {/* <Route path="/dashboard" component={Dashboard} /> */}
+            <Route path="/users" element={<UserPage/>} />
+            <Route path="/images" element={<HomePage/>} />
             {/* ... other routes */}
           </Routes>
         </Router>
