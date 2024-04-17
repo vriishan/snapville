@@ -5,6 +5,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { SearchProvider } from "./context/SearchProvider";
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import UserPage from "./pages/UserPage/UserPage";
+import ImagePage from "./pages/ImagePage/ImagePage";
 import Header from "./components/Header/Header";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
             <Route path="/" element={<HomePage/>} />
             <Route path="/users" element={<UserPage/>} />
             <Route path="/images" element={<HomePage/>} />
+            <Route path="/images/:imageId" element={<ImagePage />} />
             {/* ... other routes */}
           </Routes>
         </Router>

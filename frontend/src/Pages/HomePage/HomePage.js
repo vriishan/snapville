@@ -64,7 +64,7 @@ function HomePage() {
 
   return (
     <div>
-      <Background />
+      {/* <Background /> */}
       {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />} {/* Include UploadPopup */}
       {images.length > 0 && <ImageGrid images={images} onImageClick={handleImageClick} />}
       {images.length == 0 && !isLoading && <div className="noImagesText">{noImagesTextValue}</div>}

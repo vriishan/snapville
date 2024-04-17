@@ -1,54 +1,114 @@
 .image-page {
     display: flex;
-    flex-direction: row;
-    max-width: 1200px;
-    margin: auto;
+    flex-direction: column;
+    width: 100%; /* Ensure it doesn't overflow the viewport width */
+    height: 100%;
+    padding: 0 2rem 3rem;
   }
   
   .image-header {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    text-align: center;
+    color: #2C3E50;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .image-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 0 2rem;
   }
   
   .image-content {
-    flex-grow: 1;
+    max-height: 90vh;
+    max-width: 60%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background-color: #222;
+    justify-content: flex-start; /* Center the image horizontally */
+    align-items: center; /* Center the image vertically */
   }
   
   .image-content img {
-    max-width: 100%;
-    max-height: 80vh;
-    object-fit: contain;
+    max-height: 100%; /* Ensure the image doesn't exceed the viewport height */
+    max-width: 100%; /* Ensure the image doesn't exceed the container's width */
+    object-fit: cover; /* Cover the area, can be changed to contain if full image needs to fit */
   }
   
   .image-sidebar {
-    width: 300px;
-    background-color: #f4f4f4;
+    /* Assuming the sidebar should be on the right-hand side and scroll independently */
+    background-color: #8a8a8a;
+    width: 22%; /* Adjust width as needed */
+    overflow-y: auto; /* Allow scrolling on the y-axis */
+    /* border-left: 2px solid #676767; Replace with the actual color code for the darker gray you want */
     padding: 20px;
+    border-radius: 15px; /* Adjust the border-radius to get the desired rounded corners */
+    /* margin-left: 20px; Adjust spacing to your preference */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Optional: adds a subtle shadow */
   }
   
   .image-metadata {
-    font-size: 0.9rem;
+    color: #f4f4f4;
+  }
+
+  .image-tags {
+    color: #2C3E50
   }
   
-  .image-metadata div {
-    margin-bottom: 10px;
+  .image-tags ul {
+    list-style-type: none; /* Removes the default list bullet points */
+    padding: 0; /* Removes the default padding */
+    margin-top: 10px; /* Adds some space above the tags list */
   }
   
-  .image-metadata ul {
-    padding: 0;
-  }
-  
-  .image-metadata li {
-    list-style: none;
-    background-color: #e1e1e1;
+  .image-tags li {
+    background-color: #9f9f9f; /* Optional: use an even lighter gray for tag items */
+    display: inline-block; /* Displays tags in a line */
     padding: 5px 10px;
-    margin-bottom: 5px;
+    margin-right: 5px; /* Spacing between tags */
+    border-radius: 5px; /* Slight rounded edges for tag items */
+    margin-bottom: 5px; /* Spacing between lines of tags */
+  }
+
+  .image-metadata div {
+    padding: 0.15rem 0;
   }
   
+  .back-button {
+    cursor: pointer;
+    padding: 1rem 0 0;
+    z-index: 10; /* Make sure it's above other elements */
+    color: #2C3E50;
+  }
+  
+  .back-button:hover {
+    background-color: transparent; /* or set it to the same background color as the normal state */
+    color: inherit; /* or set it to the same text color as the normal state */
+  }
+
+  .icon-button {
+    margin-left: 8px; /* Spacing between the title and the icon */
+    cursor: pointer; /* Changes the cursor to signify the element is clickable */
+  }
+  
+  /* Adjust the size and color of the icons as needed */
+  .icon-button {
+    font-size: 2.0rem; /* Example size, adjust as needed */
+    color: #2C3E50; /* Example color, adjust as needed */
+  }
+  
+  /* Optional: Add hover effect for better user interaction */
+  .icon-button:hover {
+    color: #000; /* Darker color on hover */
+  }
+
+  .image-header-icons {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem 2rem 0;
+    gap: 0 0.50rem;
+  }
+
+  .image-header {
+    display: flex;
+    flex-direction: row;
+  }
