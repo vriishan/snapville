@@ -14,25 +14,33 @@ const EditModal = ({ image, updateImage, handleModalClose }) => {
   };
 
   return (
-      <Modal show onHide={() => handleModalClose()}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Image Details</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <label>Title</label>
-          <input value={title} onChange={e => setTitle(e.target.value)} />
-          <label>Tags</label>
-          <input value={tags} onChange={e => setTags(e.target.value)} />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleModalClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Save Changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
+    <Modal show onHide={() => handleModalClose()}>
+      <Modal.Header closeButton>
+        <Modal.Title className="modal-title">Edit Image Details</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <label className="modal-label">Title</label>
+        <input
+          className="modal-input"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+        />
+        <label className="modal-label">Tags (separated by commas)</label>
+        <input
+          className="modal-input"
+          value={tags}
+          onChange={e => setTags(e.target.value)}
+        />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleModalClose} className="modal-footer-button">
+          Close
+        </Button>
+        <Button variant="primary" onClick={handleSave} className="modal-footer-button">
+          Save Changes
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

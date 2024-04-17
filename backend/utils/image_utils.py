@@ -31,7 +31,7 @@ def process_image(file_path):
         "file_name": file_name
     }
 
-def create_thumbnail(input_path, output_path, size=(320, 240)):
+def create_thumbnail(input_path, output_path, size=(400, 400)):
     """
     Generates a thumbnail of an image.
     :param input_path: Path to the original image.

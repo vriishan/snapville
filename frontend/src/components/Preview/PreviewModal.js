@@ -35,7 +35,7 @@ const PreviewModal = ({
             className="previewModal__input"
           />
         </div>
-        <button className="previewModal__button" onClick={handleUpload}>
+        <button className="previewModal__button" onClick={() => {handleUpload(); handleClose();}}>
           Upload Image
         </button>
       </div>

@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import PreviewModal from './../Preview/PreviewModal'
 import "./UploadPopup.css";
+import { useNavigate } from "react-router-dom";
 
 const UploadPopup = ({ handleUploadPopupClose }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -9,6 +10,7 @@ const UploadPopup = ({ handleUploadPopupClose }) => {
   const [imageName, setImageName] = useState("");
   const [imageTags, setImageTags] = useState([]);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleImageChange = (event) => {
     const imageFile = event.target.files[0];
@@ -37,57 +39,62 @@ const UploadPopup = ({ handleUploadPopupClose }) => {
     setPreviewModalOpen(false);
   };
 
-  const handleImageUpload = () => {
+  const handleImageUpload = async () => {
     console.log("Selected Image:", selectedImage);
     console.log("Image Name:", imageName);
     console.log("Image Tags:", imageTags);
-
+  
     // Check if all necessary data is available
     if (!selectedImage || !imageName || !imageTags) {
       console.error("Missing required data for image upload");
       return;
     }
-
-    // get owner details for the form
+  
+    // Get owner details for the form
     const owner = sessionStorage.getItem('username');
     if (!owner) {
-      console.error("current user's username not found in storage");
+      console.error("Current user's username not found in storage");
       return;
     }
-
+  
     // Prepare the form data
     const formData = new FormData();
     formData.append("image", selectedImage);
     formData.append("data", JSON.stringify({ title: imageName, tags: imageTags, owner: owner}));
-
+  
     console.log("Form Data:", formData);
-
-    // Send POST request to upload image
+  
+    // Get the authorization token
     const token = sessionStorage.getItem("token");
     if (!token) {
-      console.error("token not found in storage");
+      console.error("Token not found in storage");
       return;
     }
-
+  
     const myHeaders = new Headers();
     myHeaders.append("Authorization", `Token ${token}`);
-
+  
     const requestOptions = {
       method: "POST",
       headers: myHeaders,
       body: formData,
       redirect: "follow"
     };
-
-    fetch("http://127.0.0.1:8000/api/$upload-image/", requestOptions)
-      .then((response) => response.text())
-      .then((result) => {
-        console.log(result);
-        // Handle success
-        // You can add any further actions here after successful upload
-      })
-      .catch((error) => console.error(error));
+  
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/$upload-image/", requestOptions);
+      const result = await response.json(); // or response.json() if the response is JSON
+      console.log(result);
+      handleUploadPopupClose();
+      alert('Image uploaded successfully');
+      navigate(0);
+    } catch (error) {
+      console.error(error);
+      alert('Image upload failed');
+      handleUploadPopupClose();
+    }
   };
+  
 
   return (
     <div className="uploadPopup">

@@ -34,6 +34,7 @@ const Header = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     setSearchTerm(searchValue);
+    navigate('/images');
   };
 
   const handleUploadPopupOpen = () => {
@@ -55,22 +56,22 @@ const Header = () => {
           <a href="/" style={{ textDecoration: 'none', cursor: 'pointer', color: '#fff' }}>snapville</a>
         </div>
         <div className="header__admin">
-          {currentUser && <span>Admin</span>}
+          {currentUser && currentUser.is_admin && <span>Admin</span>}
         </div>
       </div>
       <div className="header__searchContainer">
         <form onSubmit={handleSubmit}>
           <div className="header__searchContainer__bar">
-            <input className="header__search" type="text" placeholder="Search by tag..." value={searchValue} onChange={handleChange}></input>
+            <input className="header__search" type="text" placeholder="Search by title, tag or user..." value={searchValue} onChange={handleChange}></input>
             <button type="submit" className="header__searchButton"><FaSearch className="header__searchIcon" /></button>
           </div>
         </form>
       </div>
       <div className="header__buttonContainer">
-        {currentUser && <div className={`header__navlink ${activeNav === 'images' ? 'active' : ''}`} onClick={() => handleNavClick('images')}>
+        {currentUser && currentUser.is_admin && <div className={`header__navlink ${activeNav === 'images' ? 'active' : ''}`} onClick={() => handleNavClick('images')}>
           <span>Images</span>
         </div>}
-        {currentUser && <div className={`header__navlink ${activeNav === 'users' ? 'active' : ''}`} onClick={() => handleNavClick('users')}>
+        {currentUser && currentUser.is_admin && <div className={`header__navlink ${activeNav === 'users' ? 'active' : ''}`} onClick={() => handleNavClick('users')}>
           <span>Users</span>
         </div>}
         {currentUser && (

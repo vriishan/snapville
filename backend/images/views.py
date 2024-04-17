@@ -13,7 +13,6 @@ from images.models import ImageMetadata
 from tags.models import Tag
 from image_tags.models import ImageTag
 from user_images.models import UserImage
-from django.shortcuts import get_object_or_404
 from utils.hash_utils import *
 from snapville.settings import MEDIA_ROOT
 from snapville.permissions import IsOwnerOrSuperuser
@@ -55,30 +54,43 @@ class ImageViewSet(viewsets.GenericViewSet,
 
     def get_queryset(self):
         if self.request.query_params:
-            # Get query params
-            tag = self.request.query_params.get('tag', None)
+            query_params = self.request.query_params
+            image_ids_set = set()
 
-            email_id = self.request.query_params.get('email_id', None)
-
-            sortBy = self.request.query_params.get('sortBy', False)
-
-            res = []
-
-            # Filter by category if it's in query params
+            # Filter by tag if it's in query params
+            tag = query_params.get('tag')
             if tag is not None:
-                tag = get_object_or_404(Tag, name=tag)
-                imageList = ImageTag.objects.using('default').filter(tag=tag.id).values_list('image_id', flat=True) 
-                res = self.getImagesFromIdList(imageList)
-                # this should ideally be done on the frontend
-                res.sort(key=lambda x: x.viewcount, reverse=True)
+                tag_obj = Tag.objects.filter(name=tag).first()
+                if tag_obj:
+                    query = ImageTag.objects.filter(tag=tag_obj).values_list('image_id', flat=True).query
+                    print(str(query))
+                    tag_image_ids = ImageTag.objects.filter(tag=tag_obj).values_list('image_id', flat=True)
+                    image_ids_set.update(tag_image_ids)
 
-            elif email_id is not None:
-                imageList = UserImage.objects.using('default').filter(user_id=email_id).values_list('image_id', flat=True)
-                res = self.getImagesFromIdList(imageList)
-                # this should ideally be done on the frontend
-                res.sort(key=lambda x: x.viewcount, reverse=True)
-            
-            return res
+            # Filter by user ID if it's in query params
+            username = query_params.get('username')
+            if username is not None:
+                user_ids = User.objects.filter(username=username).values_list('email_id', flat=True)
+                if user_ids:
+                    user_image_ids = UserImage.objects.filter(user_id__in=user_ids).values_list('image_id', flat=True)
+                    image_ids_set.update(user_image_ids)
+
+            # Filter by title if it's in query params
+            title = query_params.get('title')
+            if title is not None:
+                for part in DB_LOOKUP.values():
+                    if part == 'default':
+                        continue
+                    image_ids_set.update(Image.objects.using(part).filter(title__icontains=title).values_list('id', flat=True))
+
+            # Retrieve the list of images from the combined set of IDs
+            if image_ids_set:
+                images = self.getImagesFromIdList(list(image_ids_set))
+                # Sorting by viewcount should be done on the frontend, but it's included here for completeness
+                images = sorted(images, key=lambda x: x.viewcount, reverse=True)
+                return images
+
+            return []
 
         allImages = []
         for part in DB_LOOKUP.values():
