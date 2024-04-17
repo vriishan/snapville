@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import "./ImageGrid.css";
 import ImageModal from "./ImageModal";
+import { useNavigate } from 'react-router-dom';
 
 const ImageItem = ({ image, openModal }) => {
   
   const [viewCount, setViewCount] = useState(image.viewcount);
 
+  const navigate = useNavigate();
+
   const handleImageClick = () => {
     setViewCount(prevCount => prevCount + 1);
-    openModal(image);
+    navigate(`/images/${image.id}`);
+    // openModal(image);
   };
 
   return (
