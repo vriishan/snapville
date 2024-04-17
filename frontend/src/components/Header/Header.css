@@ -7,7 +7,26 @@
   padding: 20px;
   align-items: center;
   height: 10vh;
+  width: 100%;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header__logoContainer {
+  width: 11%;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-evenly;
+}
+
+.header__searchContainer {
+  display: flex;
+  width: 35%;
+}
+
+.header__logoContainer span {
+  font-size: 1.25rem;
+  color: rgb(235, 235, 84);
 }
 
 .header__logo {
@@ -15,9 +34,13 @@
   font-size: x-large;
 }
 
-.header__searchContainer {
+.header__searchContainer form {
+  width: 100%;
+}
+
+.header__searchContainer__bar {
   position: relative;
-  width: 150%;
+  width: 100%;
 }
 
 .header__search {
@@ -46,6 +69,9 @@
 .header__buttonContainer {
   display: flex;
   flex-direction: row;
+  width: 30%;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 .buttonContainer__button {
@@ -70,4 +96,23 @@
 
 .header__searchButton {
   display: none;
+}
+
+.header__navlink, .header__admin {
+  align-items: center;
+  padding: 0 .2rem;
+}
+
+.header__navlink span {
+  cursor: pointer; /* Makes the mouse cursor indicate clickable links */
+  color: #ffffff; /* White text color, can be adjusted */
+  background-color: #6cace4; /* Light blue background, similar to the "Upload Image" button */
+  padding: 10px 15px; /* Top and Bottom padding of 10px, Left and Right padding of 15px */
+  border-radius: 5px; /* Rounded corners */
+  margin-right: 10px; /* Spacing between the links */
+  transition: background-color 0.3s ease; /* Smooth transition for the background color */
+}
+
+.header__navlink span:hover {
+  background-color: #5591c8; /* Darker shade of blue on hover to indicate interactivity */
 }

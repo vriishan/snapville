@@ -5,15 +5,16 @@ import ImageGrid from "./../../components/ImageGrid/ImageGrid";
 import Background from "./../../Background";
 import ImageModal from "./../../components/ImageGrid/ImageModal";
 import * as Constants from './../../utils/constants'
-import { useAuth } from "../../context/AuthContext";
 import { useSearch } from "../../context/SearchProvider";
+
 
 function HomePage() {
   const [openUploadPopup, setOpenUploadPopup] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const [noImagesTextValue, setNoImagesTextValue] = useState("No images to show");
   const { searchTerm } = useSearch();
   const [images, setImages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -32,10 +33,22 @@ function HomePage() {
         }
       } catch (error) {
         console.error("Error fetching images:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchImages();
   }, [searchTerm]);
+
+  useEffect(() => {
+    if (images.length === 0) {
+      if (searchTerm) {
+        setNoImagesTextValue(`No images to show for '${searchTerm}'`);
+      } else {
+        setNoImagesTextValue("No images to show");
+      }
+    }
+  }, [images, searchTerm]);
 
   const handleUploadPopupClose = () => {
     setOpenUploadPopup(false);
@@ -50,10 +63,11 @@ function HomePage() {
   };
 
   return (
-    <div className="App">
+    <div>
       <Background />
       {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />} {/* Include UploadPopup */}
-      <ImageGrid images={images} onImageClick={handleImageClick} />
+      {images.length > 0 && <ImageGrid images={images} onImageClick={handleImageClick} />}
+      {images.length == 0 && !isLoading && <div className="noImagesText">{noImagesTextValue}</div>}
       {selectedImage && (
         <ImageModal
           imagePath={selectedImage.path}

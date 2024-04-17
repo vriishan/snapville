@@ -7,3 +7,12 @@
     outline: none;
   }
   
+  .noImagesText {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height of the viewport */
+    font-size: 2em; /* Larger font size */
+    color: #aaa; /* Light shade of text */
+    width: 100%; /* Ensure it spans the full width of the viewport */
+  }
