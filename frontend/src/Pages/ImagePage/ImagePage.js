@@ -106,17 +106,13 @@ const ImagePage = () => {
                 setImage(prevImage => {
                     return { ...prevImage, title: title, tags: tags };
                 });
-                toast.success(<StatusToast message={`Updated image successfully`}/>, {
-                    autoClose: 4000
-                  });
+                toast.success(<StatusToast message={`Updated image successfully`}/>);
             } else {
                 throw new Error('Failed to update the image');
             }
         } catch (error) {
             console.error("Error updating image:", error);
-            toast.success(<StatusToast message={`Error updating image: ${JSON.stringify(error)}`}/>, {
-                autoClose: 4000
-              });
+            toast.success(<StatusToast message={`Error updating image: ${JSON.stringify(error)}`}/>);
         }
     }
 
