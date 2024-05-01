@@ -5,10 +5,12 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
-import { faShareAlt, faEdit, faDownload, faTrash, faL } from '@fortawesome/free-solid-svg-icons';
+import { faShareAlt, faEdit, faDownload, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import EditModal from '../../components/Edit/EditModal';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
+import StatusToast from '../../components/StatusToast/StatusToast';
 
 const ImagePage = () => {
     const [image, setImage] = useState(null);
@@ -72,14 +74,14 @@ const ImagePage = () => {
             });
     
             if (response.ok) {
-                alert('Image deleted successfully!');
+                toast.success(<StatusToast message={`Image deleted successfully`}/>);
                 navigate(-1); // Optionally navigate back after deletion
             } else {
-                throw new Error('Failed to delete the image');
+                toast.error(<StatusToast message={`Error deleting image: ${JSON.stringify(response.error)}`}/>);
             }
         } catch (error) {
             console.error("Error deleting image:", error);
-            alert('Error deleting image');
+            toast.error(<StatusToast message={`Error deleting image: ${JSON.stringify(error)}`}/>);
         }
     };
 
@@ -104,13 +106,13 @@ const ImagePage = () => {
                 setImage(prevImage => {
                     return { ...prevImage, title: title, tags: tags };
                 });
-                alert('Image updated successfully!');
+                toast.success(<StatusToast message={`Updated image successfully`}/>);
             } else {
                 throw new Error('Failed to update the image');
             }
         } catch (error) {
-            console.error("Error deleting image:", error);
-            alert('Error deleting image');
+            console.error("Error updating image:", error);
+            toast.success(<StatusToast message={`Error updating image: ${JSON.stringify(error)}`}/>);
         }
     }
 
@@ -147,10 +149,10 @@ const ImagePage = () => {
                     <p>Uploaded by: {image.user.username}</p>
                 </div>
                 <div className="image-header-icons">
-                    {currentUser && currentUser.email_id == image.owner && <FontAwesomeIcon icon={faEdit} onClick={handleEdit} className="icon-button" title="Edit" />}
+                    {currentUser && currentUser.email_id === image.owner && <FontAwesomeIcon icon={faEdit} onClick={handleEdit} className="icon-button" title="Edit" />}
                     <FontAwesomeIcon icon={faShareAlt} onClick={handleShare} className="icon-button" title="Share" />
                     <FontAwesomeIcon icon={faDownload} onClick={handleDownload} className="icon-button" title="Download" />
-                    {currentUser && (currentUser.is_admin || currentUser.email_id == image.owner) && <FontAwesomeIcon icon={faTrash} onClick={handleDelete} className="icon-button" title="Delete" />}
+                    {currentUser && (currentUser.is_admin || currentUser.email_id === image.owner) && <FontAwesomeIcon icon={faTrash} onClick={handleDelete} className="icon-button" title="Delete" />}
                 </div>
             </div>
             <div className="image-tags">

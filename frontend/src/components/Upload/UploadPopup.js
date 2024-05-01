@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import PreviewModal from './../Preview/PreviewModal'
 import "./UploadPopup.css";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import StatusToast from "../StatusToast/StatusToast";
 
 const UploadPopup = ({ handleUploadPopupClose }) => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -86,11 +88,11 @@ const UploadPopup = ({ handleUploadPopupClose }) => {
       const result = await response.json(); // or response.json() if the response is JSON
       console.log(result);
       handleUploadPopupClose();
-      alert('Image uploaded successfully');
       navigate(0);
+      toast.success(<StatusToast message={`Image uploaded successfully!`}/>);
     } catch (error) {
       console.error(error);
-      alert('Image upload failed');
+      toast.error(<StatusToast message={`Image upload failed: ${JSON.stringify(error)}`}/>);
       handleUploadPopupClose();
     }
   };

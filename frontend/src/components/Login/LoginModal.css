@@ -70,3 +70,7 @@
     left: calc(100% - 40px);
     cursor: pointer;
 }
+
+.error-message {
+    color: red;
+}

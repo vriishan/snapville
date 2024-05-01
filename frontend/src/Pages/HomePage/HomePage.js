@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./HomePage.css";
 import UploadPopup from "./../../components/Upload/UploadPopup"; // Import UploadPopup component
 import ImageGrid from "./../../components/ImageGrid/ImageGrid";
-import Background from "./../../Background";
 import ImageModal from "./../../components/ImageGrid/ImageModal";
 import * as Constants from './../../utils/constants'
 import { useSearch } from "../../context/SearchProvider";
@@ -65,7 +64,6 @@ function HomePage() {
 
   return (
     <div>
-      {/* <Background /> */}
       {openUploadPopup && <UploadPopup handleUploadPopupClose={handleUploadPopupClose} />} {/* Include UploadPopup */}
       {images.length > 0 && <ImageGrid images={images} onImageClick={handleImageClick} />}
       {images.length === 0 && !isLoading && <div className="noImagesText">{noImagesTextValue}</div>}

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './LoginModal.css';
-import { INTROSPECT_ENDPOINT } from '../../utils/constants';
+import { INTROSPECT_ENDPOINT, TOKEN_ENDPOINT } from '../../utils/constants';
 import { useAuth } from '../../context/AuthContext';
+import { toast } from "react-toastify";
+import StatusToast from '../StatusToast/StatusToast';
 
 const LoginModal = ({ setShowLoginModal }) => {
   const { currentUser, setCurrentUser, logout } = useAuth();
@@ -41,7 +43,7 @@ const LoginModal = ({ setShowLoginModal }) => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api-token-auth/', {
+      const response = await fetch(`${TOKEN_ENDPOINT}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -54,7 +56,7 @@ const LoginModal = ({ setShowLoginModal }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail);
+        throw new Error(JSON.stringify(errorData));
       }
 
       const data = await response.json();
@@ -80,6 +82,8 @@ const LoginModal = ({ setShowLoginModal }) => {
 
       setCurrentUser(userData);
       setShowLoginModal(false);
+      
+      toast.success(<StatusToast message={`Successfully logged in as ${userData.username}`}/>);
 
     } catch (error) {
       setError(error.message);
