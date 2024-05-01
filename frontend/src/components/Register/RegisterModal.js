@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './RegisterModal.css';
+import { toast } from 'react-toastify';
+import StatusToast from '../StatusToast/StatusToast';
 
 const RegisterModal = ({ setShowRegisterModal }) => {
   const [formData, setFormData] = useState({
@@ -35,13 +37,13 @@ const RegisterModal = ({ setShowRegisterModal }) => {
     e.preventDefault();
     const { firstName, lastName, email, password, confirmPassword, dateOfBirth, username } = formData;
     if (!firstName || !lastName || !email || !password || !confirmPassword || !dateOfBirth || !username) {
-      alert('Please fill in all fields');
+      toast.warn(<StatusToast message={`Please fill in all fields`}/>);
       return;
     }
     const currentDate = new Date();
     const selectedDate = new Date(dateOfBirth);
     if (selectedDate > currentDate) {
-      alert('Date of Birth cannot be in the future');
+      toast.warn(<StatusToast message={`Date of birth cannot be in the future`}/>);
       return;
     }
     const postData = {
@@ -63,11 +65,11 @@ const RegisterModal = ({ setShowRegisterModal }) => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-      alert('Registration successful');
+      toast.success(<StatusToast message={`User registration successful`}/>);
       setShowRegisterModal(false);
     } catch (error) {
       console.error('Error:', error.message);
-      alert('Registration failed. Please try again later.');
+      toast.warn(<StatusToast message={`User registration failed: ${JSON.stringify(error)}`}/>);
     }
   };
 
